@@ -1,0 +1,1 @@
+UPDATE public.vehicle_datasets SET status = 'published' WHERE name = 'July 2026';
