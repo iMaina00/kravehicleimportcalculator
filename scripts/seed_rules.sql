@@ -74,10 +74,8 @@ INSERT INTO depreciation_rules (version_id,import_type,label,min_years,max_years
 INSERT INTO tax_rules (version_id,category_code,import_type,name,tax_type,rate,fixed_amount,formula,calculation_base,customs_divisors,source,sort_order)
 SELECT '11111111-1111-4111-8111-111111111111', c.code, t.import_type, r.name, r.tax_type, r.rate, r.fixed_amount, r.formula, r.calculation_base, r.divisors, r.source, r.sort_order
 FROM (VALUES ('direct'),('previously_registered')) AS t(import_type)
-CROSS JOIN LATERAL (VALUES (1)) AS dummy(x)
-JOIN LATERAL (SELECT 1) s ON true
-JOIN vehicle_categories c ON true
-JOIN LATERAL (
+CROSS JOIN vehicle_categories c
+CROSS JOIN LATERAL (
   VALUES
   ('Customs value','customs_value',NULL::numeric,NULL::numeric,'((CRSP / d1) * (1 - depreciation) / d2 ... ) * (1 - extra_depreciation)','crsp',
     CASE c.code
