@@ -109,6 +109,6 @@ CROSS JOIN LATERAL (
   ('VAT','vat',0.16,NULL::numeric,'(customs_value + import_duty + excise) * rate','customs_value_plus_import_duty_plus_excise','{}'::numeric[],'TEMPLATE 2025 VAT formula',4),
   ('Railway Development Levy (RDL)','rdl',0.02,NULL::numeric,'customs_value * rate','customs_value','{}'::numeric[],'TEMPLATE 2025 RDL formula',5),
   ('Import Declaration Fee (IDF)','idf',0.025,NULL::numeric,'customs_value * rate','customs_value','{}'::numeric[],'TEMPLATE 2025 IDF formula',6)
-) AS r(name,tax_type,rate,fixed_amount,formula,calculation_base,divisors,source,sort_order) ON true;
+) AS r(name,tax_type,rate,fixed_amount,formula,calculation_base,divisors,source,sort_order);
 
 COMMIT;
