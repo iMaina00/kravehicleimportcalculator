@@ -55,9 +55,11 @@ export interface ExchangeRate {
 
 export interface RuleSet {
   taxRuleVersionId: string;
+  taxRuleVersionName?: string | null;
   depreciationVersionId: string;
-  exchangeRateVersionId: string;
+  exchangeRateVersionId: string | null;
   datasetId: string | null;
+  datasetName?: string | null;
   taxRules: TaxRule[];
   depreciationRules: DepreciationRule[];
   exchangeRates: ExchangeRate[];
@@ -65,32 +67,32 @@ export interface RuleSet {
 
 /** Vehicle facts used for classification and valuation. */
 export interface VehicleInput {
-  id?: string | null;
-  make?: string | null;
-  model?: string | null;
-  engineCapacityCc?: number | null;
-  fuel?: string | null;
-  bodyType?: string | null;
+  id?: string | null | undefined;
+  make?: string | null | undefined;
+  model?: string | null | undefined;
+  engineCapacityCc?: number | null | undefined;
+  fuel?: string | null | undefined;
+  bodyType?: string | null | undefined;
   crspKes: number;
   /** Overrides automatic classification when the user knows the category. */
-  categoryOverride?: CategoryCode | null;
+  categoryOverride?: CategoryCode | null | undefined;
   /** "vehicle" | "motorcycle" | "machinery" — which source table the record came from. */
-  recordType?: "vehicle" | "motorcycle" | "machinery";
+  recordType?: "vehicle" | "motorcycle" | "machinery" | undefined;
 }
 
 export interface CalculationInput {
   vehicle: VehicleInput;
   importType: ImportType;
   yearOfManufacture: number;
-  firstRegistrationYear?: number | null;
+  firstRegistrationYear?: number | null | undefined;
   importDate: string; // ISO date
-  purchasePrice?: number | null;
+  purchasePrice?: number | null | undefined;
   currency: string;
-  freight?: number | null;
-  insurance?: number | null;
-  otherCosts?: number | null;
+  freight?: number | null | undefined;
+  insurance?: number | null | undefined;
+  otherCosts?: number | null | undefined;
   /** Extra depreciation fraction (0-1). The workbook exposes this cell but states no rule for it. */
-  extraDepreciation?: number | null;
+  extraDepreciation?: number | null | undefined;
 }
 
 export interface LineItem {
@@ -145,7 +147,7 @@ export interface CalculationResult {
     datasetId: string | null;
     taxRuleVersionId: string;
     depreciationVersionId: string;
-    exchangeRateVersionId: string;
+    exchangeRateVersionId: string | null;
   };
   warnings: string[];
 }
