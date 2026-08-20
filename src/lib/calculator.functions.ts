@@ -63,12 +63,12 @@ export const searchRecords = createServerFn({ method: "POST" })
       p_dataset: datasetId,
       p_query: q,
       p_tokens: tokens,
-      p_fuel: data.fuel ?? null,
-      p_body_type: data.bodyType ?? null,
-      p_transmission: data.transmission ?? null,
-      p_drive: data.drive ?? null,
-      p_engine_min: data.engineMin ?? null,
-      p_engine_max: data.engineMax ?? null,
+      p_fuel: data.fuel ?? undefined,
+      p_body_type: data.bodyType ?? undefined,
+      p_transmission: data.transmission ?? undefined,
+      p_drive: data.drive ?? undefined,
+      p_engine_min: data.engineMin ?? undefined,
+      p_engine_max: data.engineMax ?? undefined,
       p_limit: data.limit,
     });
     if (error) throw new Error(error.message);
