@@ -15,6 +15,8 @@ const categoryCodes = [
   "HEAVY_MACHINERY",
 ] as const;
 
+type SearchRow = Record<string, string | number | boolean | null | string[]>;
+
 const searchSchema = z.object({
   query: z.string().max(120).default(""),
   recordType: z.enum(["vehicle", "motorcycle", "machinery"]).default("vehicle"),
@@ -46,7 +48,7 @@ export const searchRecords = createServerFn({ method: "POST" })
         p_limit: data.limit,
       });
       if (error) throw new Error(error.message);
-      return { records: rows ?? [], recordType: data.recordType, datasetId };
+      return { records: (rows ?? []) as unknown as SearchRow[], recordType: data.recordType, datasetId };
     }
     if (data.recordType === "machinery") {
       const { data: rows, error } = await supabase.rpc("search_machinery", {
@@ -56,7 +58,7 @@ export const searchRecords = createServerFn({ method: "POST" })
         p_limit: data.limit,
       });
       if (error) throw new Error(error.message);
-      return { records: rows ?? [], recordType: data.recordType, datasetId };
+      return { records: (rows ?? []) as unknown as SearchRow[], recordType: data.recordType, datasetId };
     }
 
     const args: Record<string, unknown> = {
@@ -79,7 +81,7 @@ export const searchRecords = createServerFn({ method: "POST" })
       ) => Promise<{ data: unknown[] | null; error: { message: string } | null }>
     )("search_vehicles", args);
     if (error) throw new Error(error.message);
-    return { records: rows ?? [], recordType: data.recordType, datasetId };
+    return { records: (rows ?? []) as unknown as SearchRow[], recordType: data.recordType, datasetId };
   });
 
 const calcSchema = z.object({
