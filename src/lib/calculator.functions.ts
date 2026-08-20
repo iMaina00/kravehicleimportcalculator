@@ -72,10 +72,12 @@ export const searchRecords = createServerFn({ method: "POST" })
     if (data.engineMin != null) args["p_engine_min"] = data.engineMin;
     if (data.engineMax != null) args["p_engine_max"] = data.engineMax;
 
-    const { data: rows, error } = await supabase.rpc(
-      "search_vehicles",
-      args as Parameters<typeof supabase.rpc<"search_vehicles">>[1],
-    );
+    const { data: rows, error } = await (
+      supabase.rpc as unknown as (
+        fn: string,
+        params: Record<string, unknown>,
+      ) => Promise<{ data: unknown[] | null; error: { message: string } | null }>
+    )("search_vehicles", args);
     if (error) throw new Error(error.message);
     return { records: rows ?? [], recordType: data.recordType, datasetId };
   });
