@@ -11,7 +11,7 @@ export interface DepreciationResult {
   label: string;
   ruleId: string | null;
   source: string | null;
-  warning?: string;
+  warning?: string | undefined;
 }
 
 /**
