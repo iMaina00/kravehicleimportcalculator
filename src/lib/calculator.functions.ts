@@ -59,18 +59,23 @@ export const searchRecords = createServerFn({ method: "POST" })
       return { records: rows ?? [], recordType: data.recordType, datasetId };
     }
 
-    const { data: rows, error } = await supabase.rpc("search_vehicles", {
+    const args: Record<string, unknown> = {
       p_dataset: datasetId,
       p_query: q,
       p_tokens: tokens,
-      p_fuel: data.fuel ?? undefined,
-      p_body_type: data.bodyType ?? undefined,
-      p_transmission: data.transmission ?? undefined,
-      p_drive: data.drive ?? undefined,
-      p_engine_min: data.engineMin ?? undefined,
-      p_engine_max: data.engineMax ?? undefined,
       p_limit: data.limit,
-    });
+    };
+    if (data.fuel) args["p_fuel"] = data.fuel;
+    if (data.bodyType) args["p_body_type"] = data.bodyType;
+    if (data.transmission) args["p_transmission"] = data.transmission;
+    if (data.drive) args["p_drive"] = data.drive;
+    if (data.engineMin != null) args["p_engine_min"] = data.engineMin;
+    if (data.engineMax != null) args["p_engine_max"] = data.engineMax;
+
+    const { data: rows, error } = await supabase.rpc(
+      "search_vehicles",
+      args as Parameters<typeof supabase.rpc<"search_vehicles">>[1],
+    );
     if (error) throw new Error(error.message);
     return { records: rows ?? [], recordType: data.recordType, datasetId };
   });
