@@ -348,6 +348,7 @@ export type Database = {
           model: string | null
           original_row_data: Json
           rating_raw: string | null
+          search_compact: string | null
           search_text: string | null
           source_row: number | null
         }
@@ -360,6 +361,7 @@ export type Database = {
           model?: string | null
           original_row_data?: Json
           rating_raw?: string | null
+          search_compact?: string | null
           search_text?: string | null
           source_row?: number | null
         }
@@ -372,6 +374,7 @@ export type Database = {
           model?: string | null
           original_row_data?: Json
           rating_raw?: string | null
+          search_compact?: string | null
           search_text?: string | null
           source_row?: number | null
         }
@@ -399,6 +402,7 @@ export type Database = {
           model: string | null
           model_number: string | null
           original_row_data: Json
+          search_compact: string | null
           search_text: string | null
           seating: string | null
           source_row: number | null
@@ -417,6 +421,7 @@ export type Database = {
           model?: string | null
           model_number?: string | null
           original_row_data?: Json
+          search_compact?: string | null
           search_text?: string | null
           seating?: string | null
           source_row?: number | null
@@ -435,6 +440,7 @@ export type Database = {
           model?: string | null
           model_number?: string | null
           original_row_data?: Json
+          search_compact?: string | null
           search_text?: string | null
           seating?: string | null
           source_row?: number | null
@@ -647,6 +653,7 @@ export type Database = {
           model: string | null
           model_number: string | null
           original_row_data: Json
+          search_compact: string | null
           search_text: string | null
           seating: string | null
           source_row: number | null
@@ -668,6 +675,7 @@ export type Database = {
           model?: string | null
           model_number?: string | null
           original_row_data?: Json
+          search_compact?: string | null
           search_text?: string | null
           seating?: string | null
           source_row?: number | null
@@ -689,6 +697,7 @@ export type Database = {
           model?: string | null
           model_number?: string | null
           original_row_data?: Json
+          search_compact?: string | null
           search_text?: string | null
           seating?: string | null
           source_row?: number | null
@@ -709,6 +718,78 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      search_machinery: {
+        Args: {
+          p_dataset: string
+          p_limit?: number
+          p_query: string
+          p_tokens: string[]
+        }
+        Returns: {
+          crsp_kes: number
+          flags: string[]
+          id: string
+          make: string
+          model: string
+          rating_raw: string
+          score: number
+        }[]
+      }
+      search_motorcycles: {
+        Args: {
+          p_dataset: string
+          p_limit?: number
+          p_query: string
+          p_tokens: string[]
+        }
+        Returns: {
+          crsp_kes: number
+          engine_capacity_cc: number
+          engine_capacity_raw: string
+          flags: string[]
+          fuel_normalized: string
+          fuel_raw: string
+          id: string
+          make: string
+          model: string
+          model_number: string
+          score: number
+          seating: string
+          transmission: string
+        }[]
+      }
+      search_vehicles: {
+        Args: {
+          p_body_type?: string
+          p_dataset: string
+          p_drive?: string
+          p_engine_max?: number
+          p_engine_min?: number
+          p_fuel?: string
+          p_limit?: number
+          p_query: string
+          p_tokens: string[]
+          p_transmission?: string
+        }
+        Returns: {
+          body_type: string
+          crsp_kes: number
+          drive_configuration: string
+          engine_capacity_cc: number
+          engine_capacity_raw: string
+          flags: string[]
+          fuel_normalized: string
+          fuel_raw: string
+          gvw: string
+          id: string
+          make: string
+          model: string
+          model_number: string
+          score: number
+          seating: string
+          transmission: string
+        }[]
+      }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
     }
