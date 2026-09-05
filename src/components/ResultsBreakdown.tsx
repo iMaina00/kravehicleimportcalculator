@@ -102,9 +102,11 @@ export function ResultsBreakdown({
           <CardTitle className="text-base">Provenance</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2 text-sm text-muted-foreground">
-          <p>
-            Category applied: <Badge variant="secondary">{result.category.code}</Badge> — {result.category.reason}
-          </p>
+          <div className="flex flex-wrap items-center gap-2">
+            <span>Category applied:</span>
+            <Badge variant="secondary">{result.category.code}</Badge>
+            <span>— {result.category.reason}</span>
+          </div>
           <p>CRSP schedule: {meta.datasetName ?? "unknown"}</p>
           <p>Tax rule version: {meta.taxRuleVersionName ?? "unknown"}</p>
           <p className="font-mono text-xs">
