@@ -63,6 +63,14 @@ export function calculateImportTaxes(input: CalculationInput, rules: RuleSet): C
   const costs = otherImportCosts(input, rules.exchangeRates);
   warnings.push(...costs.warnings);
 
+  warnings.push(
+    "Basis: KRA CRSP (July 2025 schedule) less the 25% retail markup, EAC age depreciation measured to the arrival date, then duty, excise and 16% VAT backed out of that value. IDF 2.5% and RDL 2% are charged forward on the customs value only and are not part of the excise or VAT base. The Finance Act 2026 did not change these ordinary-car rates.",
+  );
+  warnings.push(
+    "Estimate only - confirm the final assessment on iCMS with a licensed clearing agent.",
+  );
+
+
   return {
     vehicle: input.vehicle,
     category: { code: category, reason: classification.reason },
