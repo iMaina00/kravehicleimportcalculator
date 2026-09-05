@@ -24,10 +24,10 @@ export async function loadActiveRuleSet(): Promise<RuleSet> {
   const supabase = publicClient();
 
   const [datasets, taxVersions, depVersions, fxVersions] = await Promise.all([
-    supabase.from("vehicle_datasets").select("id, name, effective_date").eq("status", "active").order("effective_date", { ascending: false }).limit(1),
-    supabase.from("tax_rule_versions").select("id, name, effective_date").eq("status", "active").order("effective_date", { ascending: false }).limit(1),
-    supabase.from("depreciation_rule_versions").select("id, name, effective_date").eq("status", "active").order("effective_date", { ascending: false }).limit(1),
-    supabase.from("exchange_rate_versions").select("id, name, effective_date").eq("status", "active").order("effective_date", { ascending: false }).limit(1),
+    supabase.from("vehicle_datasets").select("id, name, effective_date").in("status", ["published", "active"]).order("effective_date", { ascending: false }).limit(1),
+    supabase.from("tax_rule_versions").select("id, name, effective_date").in("status", ["published", "active"]).order("effective_date", { ascending: false }).limit(1),
+    supabase.from("depreciation_rule_versions").select("id, name, effective_date").in("status", ["published", "active"]).order("effective_date", { ascending: false }).limit(1),
+    supabase.from("exchange_rate_versions").select("id, name, effective_date").in("status", ["published", "active"]).order("effective_date", { ascending: false }).limit(1),
   ]);
 
   const datasetId = datasets.data?.[0]?.id ?? null;
