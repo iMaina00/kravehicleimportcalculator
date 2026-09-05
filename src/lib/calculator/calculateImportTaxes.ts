@@ -27,9 +27,10 @@ export function calculateImportTaxes(input: CalculationInput, rules: RuleSet): C
   const classification = classifyVehicle(input.vehicle);
   warnings.push(...classification.warnings);
 
-  const age = vehicleAgeYears(input.importDate, input.yearOfManufacture);
+  const age = vehicleAgeYears(input.importDate, input.yearOfManufacture, input.firstRegistrationYear);
   const dep = resolveDepreciation(rules.depreciationRules, input.importType, age);
   if (dep.warning) warnings.push(dep.warning);
+
 
   const crsp = Number(input.vehicle.crspKes);
   const extra = Number(input.extraDepreciation ?? 0);
