@@ -191,7 +191,8 @@ export const findCrspRecords = createServerFn({ method: "POST" })
       .eq("make", data.make)
       .limit(data.limit);
     if (data.model) q = q.eq("model", data.model);
-    if (data.modelNumber) q = q.eq("model_number", data.modelNumber);
+    if (data.modelNumber)
+      q = (q as unknown as { eq: (c: string, v: string) => typeof q }).eq("model_number", data.modelNumber);
     const { data: rows, error } = await q;
     if (error) throw new Error(error.message);
     return { records: (rows ?? []) as unknown as SearchRow[], recordType: data.recordType };
