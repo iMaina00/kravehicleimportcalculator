@@ -718,6 +718,21 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      crsp_options: {
+        Args: {
+          p_dataset: string
+          p_field: string
+          p_limit?: number
+          p_make?: string
+          p_model?: string
+          p_query?: string
+          p_record_type: string
+        }
+        Returns: {
+          record_count: number
+          value: string
+        }[]
+      }
       search_machinery: {
         Args: {
           p_dataset: string
