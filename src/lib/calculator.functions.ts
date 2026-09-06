@@ -134,3 +134,66 @@ export const getRuleReference = createServerFn({ method: "GET" }).handler(async 
     exchangeRates: rules.exchangeRates,
   };
 });
+
+const optionsSchema = z.object({
+  recordType: z.enum(["vehicle", "motorcycle", "machinery"]).default("vehicle"),
+  field: z.enum(["make", "model", "model_number"]),
+  query: z.string().max(80).default(""),
+  make: z.string().max(120).nullable().optional(),
+  model: z.string().max(200).nullable().optional(),
+  limit: z.number().int().min(1).max(200).default(50),
+});
+
+export const listCrspOptions = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) => optionsSchema.parse(input))
+  .handler(async ({ data }) => {
+    const { loadActiveRuleSet, publicClient } = await import("@/lib/rules.server");
+    const supabase = publicClient();
+    const rules = await loadActiveRuleSet();
+    const { data: rows, error } = await (
+      supabase.rpc as unknown as (
+        fn: string,
+        params: Record<string, unknown>,
+      ) => Promise<{ data: unknown[] | null; error: { message: string } | null }>
+    )("crsp_options", {
+      p_dataset: rules.datasetId!,
+      p_record_type: data.recordType,
+      p_field: data.field,
+      p_query: data.query,
+      p_make: data.make ?? null,
+      p_model: data.model ?? null,
+      p_limit: data.limit,
+    });
+    if (error) throw new Error(error.message);
+    return { options: (rows ?? []) as Array<{ value: string; record_count: number }> };
+  });
+
+const recordsSchema = z.object({
+  recordType: z.enum(["vehicle", "motorcycle", "machinery"]).default("vehicle"),
+  make: z.string().min(1).max(120),
+  model: z.string().max(200).nullable().optional(),
+  modelNumber: z.string().max(200).nullable().optional(),
+  limit: z.number().int().min(1).max(200).default(100),
+});
+
+/** Returns the exact CRSP rows (all original columns) for a make/model/model number selection. */
+export const findCrspRecords = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) => recordsSchema.parse(input))
+  .handler(async ({ data }) => {
+    const { loadActiveRuleSet, publicClient } = await import("@/lib/rules.server");
+    const supabase = publicClient();
+    const rules = await loadActiveRuleSet();
+    const table = data.recordType === "motorcycle" ? "motorcycles" : data.recordType === "machinery" ? "machinery" : "vehicles";
+    let q = supabase
+      .from(table)
+      .select("*")
+      .eq("dataset_id", rules.datasetId!)
+      .eq("make", data.make)
+      .limit(data.limit);
+    if (data.model) q = q.eq("model", data.model);
+    if (data.modelNumber)
+      q = (q as unknown as { eq: (c: string, v: string) => typeof q }).eq("model_number", data.modelNumber);
+    const { data: rows, error } = await q;
+    if (error) throw new Error(error.message);
+    return { records: (rows ?? []) as unknown as SearchRow[], recordType: data.recordType };
+  });
