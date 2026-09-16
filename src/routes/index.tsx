@@ -94,6 +94,7 @@ function Index() {
           freight: freight ? Number(freight) : null,
           insurance: insurance ? Number(insurance) : null,
           otherCosts: otherCosts ? Number(otherCosts) : null,
+          exchangeRateOverride: rateValue > 0 ? rateValue : null,
         },
       }),
   });
