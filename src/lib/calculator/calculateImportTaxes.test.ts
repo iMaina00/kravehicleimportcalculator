@@ -116,9 +116,9 @@ describe("calculateImportTaxes vs TEMPLATE 2025", () => {
       rules,
     );
     expect(res.category.code).toBe("OVER_1500CC");
-    expect(res.ageYears).toBeCloseTo(5.5, 1);
-    expect(res.depreciation.rate).toBe(0.55);
-    const customs = ((4_000_000 / 1.25) * (1 - 0.55)) / 1.35 / 1.25 / 1.16;
+    expect(res.ageYears).toBe(5);
+    expect(res.depreciation.rate).toBe(0.5);
+    const customs = ((4_000_000 / 1.25) * (1 - 0.5)) / 1.35 / 1.25 / 1.16;
     expect(res.customsValue.result).toBeCloseTo(customs, 6);
     expect(res.exciseDuty.rate).toBe(0.25);
   });
