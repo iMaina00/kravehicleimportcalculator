@@ -104,6 +104,7 @@ const calcSchema = z.object({
   freight: z.number().nonnegative().nullable().optional(),
   insurance: z.number().nonnegative().nullable().optional(),
   otherCosts: z.number().nonnegative().nullable().optional(),
+  exchangeRateOverride: z.number().positive().max(100000).nullable().optional(),
   extraDepreciation: z.number().min(0).max(1).nullable().optional(),
 });
 
