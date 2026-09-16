@@ -16,7 +16,9 @@ export function otherImportCosts(input: CalculationInput, rates: ExchangeRate[])
   const currency = input.currency.toUpperCase();
   const rate = rates.find((r) => r.currency.toUpperCase() === currency);
   const warnings: string[] = [];
-  const factor = rate ? Number(rate.rate_to_kes) : null;
+  const override = Number(input.exchangeRateOverride ?? 0);
+  const factor =
+    override > 0 ? override : currency === "KES" ? 1 : rate ? Number(rate.rate_to_kes) : null;
   if (factor === null) {
     warnings.push(
       `REQUIRES VERIFICATION: no exchange rate for ${currency} in the active exchange-rate version. Purchase price, freight, insurance and other costs were excluded from the landed cost.`,
