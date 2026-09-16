@@ -172,15 +172,56 @@ function Index() {
               </div>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-5">
-              <div>
-                <Label htmlFor="cur">Currency</Label>
-                <Input id="cur" value={currency} onChange={(e) => setCurrency(e.target.value)} />
+            <div className="rounded-md border p-3">
+              <div className="grid gap-3 sm:grid-cols-3">
+                <div>
+                  <Label>Purchase currency</Label>
+                  <Select value={currency} onValueChange={setCurrency}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="KES">KES</SelectItem>
+                      <SelectItem value="USD">USD</SelectItem>
+                      <SelectItem value="GBP">GBP</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label htmlFor="pp">Purchase price ({currency})</Label>
+                  <Input id="pp" inputMode="decimal" value={purchasePrice} onChange={(e) => setPurchasePrice(e.target.value)} />
+                </div>
+                {currency !== "KES" && (
+                  <div>
+                    <Label htmlFor="fx">{currency} → KES rate</Label>
+                    <Input
+                      id="fx"
+                      inputMode="decimal"
+                      value={rates[currency] ?? ""}
+                      onChange={(e) => setRates((r) => ({ ...r, [currency]: e.target.value }))}
+                    />
+                  </div>
+                )}
               </div>
-              <div>
-                <Label htmlFor="pp">Purchase price</Label>
-                <Input id="pp" inputMode="decimal" value={purchasePrice} onChange={(e) => setPurchasePrice(e.target.value)} />
-              </div>
+              {currency !== "KES" && (
+                <p className="mt-2 text-sm">
+                  KES equivalent:{" "}
+                  <span className="font-semibold">
+                    {kesEquivalent != null
+                      ? `KES ${kesEquivalent.toLocaleString("en-KE", { maximumFractionDigits: 0 })}`
+                      : "—"}
+                  </span>
+                  {rateValue > 0 && (
+                    <span className="text-muted-foreground"> (rate {rateValue.toFixed(2)})</span>
+                  )}
+                </p>
+              )}
+              {currency !== "KES" && rateValue <= 0 && (
+                <p className="mt-1 text-sm text-destructive">Enter a {currency} → KES rate to convert.</p>
+              )}
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-3">
               <div>
                 <Label htmlFor="fr">Freight</Label>
                 <Input id="fr" inputMode="decimal" value={freight} onChange={(e) => setFreight(e.target.value)} />
