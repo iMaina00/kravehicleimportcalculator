@@ -1,11 +1,10 @@
 import type { DepreciationRule, ImportType } from "./types";
 
-const MS_PER_YEAR = 365.25 * 24 * 60 * 60 * 1000;
-
 /**
- * EAC practice: age runs from the vehicle's manufacture / first registration
- * date to the date it arrives in Kenya, as a fraction of a year. When only a
- * year of manufacture is known, 1 January of that year is used.
+ * Age counter exactly as used by the source workbook (TEMPLATE 2025):
+ *   age = year of import - year of manufacture
+ * No fractional / arrival-date ageing is stated anywhere in the workbook, so
+ * none is applied here.
  */
 export function vehicleAgeYears(
   importDate: string,
@@ -13,10 +12,9 @@ export function vehicleAgeYears(
   firstRegistrationYear?: number | null,
 ): number {
   const startYear = firstRegistrationYear ?? yearOfManufacture;
-  const start = Date.UTC(startYear, 0, 1);
-  const arrival = new Date(importDate).getTime();
-  if (Number.isNaN(arrival)) return new Date().getUTCFullYear() - startYear;
-  return (arrival - start) / MS_PER_YEAR;
+  const importYear = new Date(importDate).getUTCFullYear();
+  if (Number.isNaN(importYear)) return new Date().getUTCFullYear() - startYear;
+  return importYear - startYear;
 }
 
 
