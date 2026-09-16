@@ -91,6 +91,8 @@ export interface CalculationInput {
   freight?: number | null | undefined;
   insurance?: number | null | undefined;
   otherCosts?: number | null | undefined;
+  /** Manually entered exchange rate (units of KES per 1 unit of `currency`). Overrides the rate table. */
+  exchangeRateOverride?: number | null | undefined;
   /** Extra depreciation fraction (0-1). The workbook exposes this cell but states no rule for it. */
   extraDepreciation?: number | null | undefined;
 }
