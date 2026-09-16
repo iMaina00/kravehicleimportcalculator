@@ -60,6 +60,7 @@ function Index() {
   const [year, setYear] = useState(String(new Date().getFullYear() - 5));
   const [categoryOverride, setCategoryOverride] = useState<string>("auto");
   const [currency, setCurrency] = useState("KES");
+  const [rates, setRates] = useState<Record<string, string>>({ USD: "130.00", GBP: "175.00" });
   const [purchasePrice, setPurchasePrice] = useState("");
   const [freight, setFreight] = useState("");
   const [insurance, setInsurance] = useState("");
