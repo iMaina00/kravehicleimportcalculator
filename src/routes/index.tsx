@@ -66,6 +66,10 @@ function Index() {
   const [insurance, setInsurance] = useState("");
   const [otherCosts, setOtherCosts] = useState("");
 
+  const rateValue = currency === "KES" ? 1 : Number(rates[currency] ?? 0);
+  const kesEquivalent =
+    purchasePrice && rateValue > 0 ? Number(purchasePrice) * rateValue : null;
+
   const run = useServerFn(calculateTaxes);
   const calc = useMutation({
     mutationFn: () =>
