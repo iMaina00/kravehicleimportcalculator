@@ -198,3 +198,94 @@ export const findCrspRecords = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { records: (rows ?? []) as unknown as SearchRow[], recordType: data.recordType };
   });
+
+type RpcFn = (
+  fn: string,
+  params: Record<string, unknown>,
+) => Promise<{ data: unknown[] | null; error: { message: string } | null }>;
+
+const strList = z.array(z.string().max(200)).max(50).default([]);
+
+const crspSearchSchema = z.object({
+  query: z.string().max(120).default(""),
+  makes: strList,
+  models: strList,
+  trims: strList,
+  fuels: strList,
+  transmissions: strList,
+  drives: strList,
+  bodies: strList,
+  seats: z.array(z.number().int().min(0).max(200)).max(20).default([]),
+  ccMin: z.number().int().min(0).max(30000).nullable().default(null),
+  ccMax: z.number().int().min(0).max(30000).nullable().default(null),
+  crspMin: z.number().min(0).max(1_000_000_000).nullable().default(null),
+  crspMax: z.number().min(0).max(1_000_000_000).nullable().default(null),
+  sort: z.enum(["relevance", "crsp_asc", "crsp_desc", "make_asc", "model_asc"]).default("make_asc"),
+  limit: z.number().int().min(1).max(100).default(25),
+  offset: z.number().int().min(0).max(10000).default(0),
+});
+
+export type CrspSearchInput = z.input<typeof crspSearchSchema>;
+
+/** Database-side CRSP vehicle search with dependent filters, ranking, sorting and a total count. */
+export const crspSearch = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) => crspSearchSchema.parse(input))
+  .handler(async ({ data }) => {
+    const { loadActiveRuleSet, publicClient } = await import("@/lib/rules.server");
+    const supabase = publicClient();
+    const rules = await loadActiveRuleSet();
+    const nz = <T,>(a: T[]) => (a.length ? a : null);
+    const { data: rows, error } = await (supabase.rpc as unknown as RpcFn)("crsp_search", {
+      p_dataset: rules.datasetId!,
+      p_query: data.query.trim() || null,
+      p_makes: nz(data.makes),
+      p_models: nz(data.models),
+      p_trims: nz(data.trims),
+      p_fuels: nz(data.fuels),
+      p_transmissions: nz(data.transmissions),
+      p_drives: nz(data.drives),
+      p_bodies: nz(data.bodies),
+      p_seats: nz(data.seats),
+      p_cc_min: data.ccMin,
+      p_cc_max: data.ccMax,
+      p_crsp_min: data.crspMin,
+      p_crsp_max: data.crspMax,
+      p_sort: data.sort,
+      p_limit: data.limit,
+      p_offset: data.offset,
+    });
+    if (error) throw new Error(error.message);
+    const records = (rows ?? []) as unknown as SearchRow[];
+    const total = records.length > 0 ? Number(records[0]!["total_count"] ?? records.length) : 0;
+    return { records, total, datasetId: rules.datasetId! };
+  });
+
+const crspFilterSchema = z.object({
+  field: z.enum(["make", "model", "trim", "fuel", "transmission", "drive", "body", "seating"]),
+  query: z.string().max(80).default(""),
+  makes: strList,
+  models: strList,
+  trims: strList,
+  limit: z.number().int().min(1).max(200).default(50),
+});
+
+/** Dependent filter option lists (make -> model -> trim, plus the attribute facets). */
+export const crspFilterOptions = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) => crspFilterSchema.parse(input))
+  .handler(async ({ data }) => {
+    const { loadActiveRuleSet, publicClient } = await import("@/lib/rules.server");
+    const supabase = publicClient();
+    const rules = await loadActiveRuleSet();
+    const nz = <T,>(a: T[]) => (a.length ? a : null);
+    const { data: rows, error } = await (supabase.rpc as unknown as RpcFn)("crsp_filter_options", {
+      p_dataset: rules.datasetId!,
+      p_field: data.field,
+      p_query: data.query.trim() || null,
+      p_makes: nz(data.makes),
+      p_models: nz(data.models),
+      p_trims: nz(data.trims),
+      p_limit: data.limit,
+    });
+    if (error) throw new Error(error.message);
+    return { options: (rows ?? []) as Array<{ value: string; record_count: number }> };
+  });
