@@ -638,70 +638,103 @@ export type Database = {
       }
       vehicles: {
         Row: {
+          body_normalized: string | null
           body_type: string | null
           crsp_kes: number | null
           dataset_id: string
           drive_configuration: string | null
+          drive_normalized: string | null
           engine_capacity_cc: number | null
           engine_capacity_raw: string | null
+          engine_hp: number | null
+          engine_kwh: number | null
           flags: string[]
+          fuel_label: string | null
           fuel_normalized: string | null
           fuel_raw: string | null
           gvw: string | null
           id: string
           make: string | null
+          make_normalized: string | null
           model: string | null
+          model_normalized: string | null
           model_number: string | null
           original_row_data: Json
+          search_blob: string | null
           search_compact: string | null
           search_text: string | null
           seating: string | null
+          seating_count: number | null
           source_row: number | null
           transmission: string | null
+          transmission_normalized: string | null
+          trim_normalized: string | null
         }
         Insert: {
+          body_normalized?: string | null
           body_type?: string | null
           crsp_kes?: number | null
           dataset_id: string
           drive_configuration?: string | null
+          drive_normalized?: string | null
           engine_capacity_cc?: number | null
           engine_capacity_raw?: string | null
+          engine_hp?: number | null
+          engine_kwh?: number | null
           flags?: string[]
+          fuel_label?: string | null
           fuel_normalized?: string | null
           fuel_raw?: string | null
           gvw?: string | null
           id?: string
           make?: string | null
+          make_normalized?: string | null
           model?: string | null
+          model_normalized?: string | null
           model_number?: string | null
           original_row_data?: Json
+          search_blob?: string | null
           search_compact?: string | null
           search_text?: string | null
           seating?: string | null
+          seating_count?: number | null
           source_row?: number | null
           transmission?: string | null
+          transmission_normalized?: string | null
+          trim_normalized?: string | null
         }
         Update: {
+          body_normalized?: string | null
           body_type?: string | null
           crsp_kes?: number | null
           dataset_id?: string
           drive_configuration?: string | null
+          drive_normalized?: string | null
           engine_capacity_cc?: number | null
           engine_capacity_raw?: string | null
+          engine_hp?: number | null
+          engine_kwh?: number | null
           flags?: string[]
+          fuel_label?: string | null
           fuel_normalized?: string | null
           fuel_raw?: string | null
           gvw?: string | null
           id?: string
           make?: string | null
+          make_normalized?: string | null
           model?: string | null
+          model_normalized?: string | null
           model_number?: string | null
           original_row_data?: Json
+          search_blob?: string | null
           search_compact?: string | null
           search_text?: string | null
           seating?: string | null
+          seating_count?: number | null
           source_row?: number | null
           transmission?: string | null
+          transmission_normalized?: string | null
+          trim_normalized?: string | null
         }
         Relationships: [
           {
@@ -718,6 +751,30 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      crsp_body_label: { Args: { t: string }; Returns: string }
+      crsp_drive_label: { Args: { t: string }; Returns: string }
+      crsp_engine_cc: { Args: { t: string }; Returns: number }
+      crsp_engine_hp: { Args: { t: string }; Returns: number }
+      crsp_engine_kwh: { Args: { t: string }; Returns: number }
+      crsp_filter_options: {
+        Args: {
+          p_dataset: string
+          p_field: string
+          p_limit?: number
+          p_makes?: string[]
+          p_models?: string[]
+          p_query?: string
+          p_trims?: string[]
+        }
+        Returns: {
+          record_count: number
+          value: string
+        }[]
+      }
+      crsp_fuel_label: { Args: { t: string }; Returns: string }
+      crsp_model_base: { Args: { t: string }; Returns: string }
+      crsp_model_trim: { Args: { t: string }; Returns: string }
+      crsp_norm: { Args: { t: string }; Returns: string }
       crsp_options: {
         Args: {
           p_dataset: string
@@ -733,6 +790,58 @@ export type Database = {
           value: string
         }[]
       }
+      crsp_search: {
+        Args: {
+          p_bodies?: string[]
+          p_cc_max?: number
+          p_cc_min?: number
+          p_crsp_max?: number
+          p_crsp_min?: number
+          p_dataset: string
+          p_drives?: string[]
+          p_fuels?: string[]
+          p_limit?: number
+          p_makes?: string[]
+          p_models?: string[]
+          p_offset?: number
+          p_query?: string
+          p_seats?: number[]
+          p_sort?: string
+          p_transmissions?: string[]
+          p_trims?: string[]
+        }
+        Returns: {
+          body_normalized: string
+          body_type: string
+          crsp_kes: number
+          drive_configuration: string
+          drive_normalized: string
+          engine_capacity_cc: number
+          engine_capacity_raw: string
+          engine_hp: number
+          engine_kwh: number
+          flags: string[]
+          fuel_label: string
+          fuel_normalized: string
+          fuel_raw: string
+          gvw: string
+          id: string
+          make: string
+          model: string
+          model_normalized: string
+          model_number: string
+          score: number
+          seating: string
+          seating_count: number
+          source_row: number
+          total_count: number
+          transmission: string
+          transmission_normalized: string
+          trim_normalized: string
+        }[]
+      }
+      crsp_seat_count: { Args: { t: string }; Returns: number }
+      crsp_transmission_label: { Args: { t: string }; Returns: string }
       search_machinery: {
         Args: {
           p_dataset: string
