@@ -323,7 +323,12 @@ export function CrspVehicleSearch({ onSelect }: { onSelect: (record: SelectedRec
                 <CardContent className="flex flex-wrap items-center justify-between gap-4 py-4">
                   <div className="min-w-0 flex-1">
                     <p className="truncate font-semibold">
-                      {String(r["make"] ?? "")} {String(r["model"] ?? "")}
+                      {(() => {
+                        const mk = String(r["make"] ?? "").trim();
+                        const md = String(r["model"] ?? "").trim();
+                        // The CRSP Model column sometimes repeats the make; show it once.
+                        return md.toUpperCase().startsWith(mk.toUpperCase()) ? md : `${mk} ${md}`;
+                      })()}
                     </p>
                     <p className="text-sm text-muted-foreground">{specs.join(" | ")}</p>
                     <p className="mt-1 text-xs text-muted-foreground">
