@@ -3,6 +3,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { VehicleSearch, type SelectedRecord } from "@/components/VehicleSearch";
+import { CrspVehicleSearch } from "@/components/crsp/CrspVehicleSearch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ResultsBreakdown } from "@/components/ResultsBreakdown";
 import { calculateTaxes } from "@/lib/calculator.functions";
 import { Button } from "@/components/ui/button";
@@ -56,6 +58,7 @@ const CATEGORIES: { value: CategoryCode; label: string }[] = [
 
 function Index() {
   const [record, setRecord] = useState<SelectedRecord | null>(null);
+  const [tab, setTab] = useState("vehicle");
   const [importType, setImportType] = useState<ImportType>("direct");
   const [year, setYear] = useState(String(new Date().getFullYear() - 5));
   const [categoryOverride, setCategoryOverride] = useState<string>("auto");
@@ -120,12 +123,28 @@ function Index() {
           <CardTitle className="text-base">1. Find the unit</CardTitle>
         </CardHeader>
         <CardContent>
-          <VehicleSearch
-            onSelect={(r) => {
-              setRecord(r);
-              calc.reset();
-            }}
-          />
+          <Tabs value={tab} onValueChange={setTab}>
+            <TabsList className="mb-4">
+              <TabsTrigger value="vehicle">Motor vehicles</TabsTrigger>
+              <TabsTrigger value="other">Motorcycles &amp; machinery</TabsTrigger>
+            </TabsList>
+            <TabsContent value="vehicle">
+              <CrspVehicleSearch
+                onSelect={(r) => {
+                  setRecord(r);
+                  calc.reset();
+                }}
+              />
+            </TabsContent>
+            <TabsContent value="other">
+              <VehicleSearch
+                onSelect={(r) => {
+                  setRecord(r);
+                  calc.reset();
+                }}
+              />
+            </TabsContent>
+          </Tabs>
         </CardContent>
       </Card>
 
