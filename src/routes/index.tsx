@@ -58,6 +58,7 @@ const CATEGORIES: { value: CategoryCode; label: string }[] = [
 
 function Index() {
   const [record, setRecord] = useState<SelectedRecord | null>(null);
+  const [tab, setTab] = useState("vehicle");
   const [importType, setImportType] = useState<ImportType>("direct");
   const [year, setYear] = useState(String(new Date().getFullYear() - 5));
   const [categoryOverride, setCategoryOverride] = useState<string>("auto");
