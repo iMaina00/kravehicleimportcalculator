@@ -120,12 +120,28 @@ function Index() {
           <CardTitle className="text-base">1. Find the unit</CardTitle>
         </CardHeader>
         <CardContent>
-          <VehicleSearch
-            onSelect={(r) => {
-              setRecord(r);
-              calc.reset();
-            }}
-          />
+          <Tabs value={tab} onValueChange={setTab}>
+            <TabsList className="mb-4">
+              <TabsTrigger value="vehicle">Motor vehicles</TabsTrigger>
+              <TabsTrigger value="other">Motorcycles &amp; machinery</TabsTrigger>
+            </TabsList>
+            <TabsContent value="vehicle">
+              <CrspVehicleSearch
+                onSelect={(r) => {
+                  setRecord(r);
+                  calc.reset();
+                }}
+              />
+            </TabsContent>
+            <TabsContent value="other">
+              <VehicleSearch
+                onSelect={(r) => {
+                  setRecord(r);
+                  calc.reset();
+                }}
+              />
+            </TabsContent>
+          </Tabs>
         </CardContent>
       </Card>
 
