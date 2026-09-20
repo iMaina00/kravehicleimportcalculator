@@ -3,6 +3,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { VehicleSearch, type SelectedRecord } from "@/components/VehicleSearch";
+import { CrspVehicleSearch } from "@/components/crsp/CrspVehicleSearch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ResultsBreakdown } from "@/components/ResultsBreakdown";
 import { calculateTaxes } from "@/lib/calculator.functions";
 import { Button } from "@/components/ui/button";
