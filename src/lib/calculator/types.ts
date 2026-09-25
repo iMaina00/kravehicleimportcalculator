@@ -74,6 +74,10 @@ export interface VehicleInput {
   fuel?: string | null | undefined;
   bodyType?: string | null | undefined;
   crspKes: number;
+  /** "crsp" (default) uses the CRSP schedule; "manual_cif" uses a user-declared CIF / invoice value in KES. */
+  valuationSource?: "crsp" | "manual_cif" | undefined;
+  /** Declared CIF / invoice value in KES, used only when valuationSource is "manual_cif". */
+  cifKes?: number | null | undefined;
   /** Overrides automatic classification when the user knows the category. */
   categoryOverride?: CategoryCode | null | undefined;
   /** "vehicle" | "motorcycle" | "machinery" — which source table the record came from. */
@@ -116,6 +120,8 @@ export interface CalculationResult {
   category: { code: CategoryCode; reason: string };
   importType: ImportType;
   ageYears: number;
+  valuationSource: "crsp" | "manual_cif";
+  cifKes: number | null;
   crspKes: number;
   depreciation: {
     rate: number;

@@ -83,20 +83,20 @@ export function FacetSelect({
   return (
     <div className="space-y-1">
       <p className="text-xs font-medium text-muted-foreground">{label}</p>
-      <Popover open={open} onOpenChange={setOpen}>
+      <Popover open={open} onOpenChange={setOpen} modal>
         <PopoverTrigger asChild>
           <Button
             variant="outline"
             role="combobox"
             aria-label={label}
             disabled={disabled}
-            className="w-full justify-between font-normal"
+            className="h-auto min-h-11 w-full justify-between whitespace-normal py-2 text-left font-normal"
           >
-            <span className="truncate">{disabled ? (disabledHint ?? summary) : summary}</span>
+            <span className="break-words">{disabled ? (disabledHint ?? summary) : summary}</span>
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
+        <PopoverContent className="w-(--radix-popover-trigger-width) max-w-[calc(100vw-1rem)] p-0" align="start" collisionPadding={8}>
           <Command shouldFilter={false}>
             <CommandInput placeholder={`Search ${label.toLowerCase()}...`} value={input} onValueChange={setInput} />
             <CommandList>
@@ -114,8 +114,8 @@ export function FacetSelect({
                         selected.includes(o.value) ? "opacity-100" : "opacity-0",
                       )}
                     />
-                    <span className="truncate">{o.value}</span>
-                    <span className="ml-auto text-xs text-muted-foreground">{o.record_count}</span>
+                    <span className="min-w-0 flex-1 break-words">{o.value}</span>
+                    <span className="ml-2 shrink-0 text-xs text-muted-foreground">{o.record_count}</span>
                   </CommandItem>
                 ))}
               </CommandGroup>

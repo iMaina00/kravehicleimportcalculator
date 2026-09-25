@@ -93,6 +93,8 @@ const calcSchema = z.object({
     fuel: z.string().max(40).nullable().optional(),
     bodyType: z.string().max(80).nullable().optional(),
     crspKes: z.number().positive().max(1_000_000_000),
+    valuationSource: z.enum(["crsp", "manual_cif"]).optional(),
+    cifKes: z.number().positive().max(1_000_000_000).nullable().optional(),
     categoryOverride: z.enum(categoryCodes).nullable().optional(),
     recordType: z.enum(["vehicle", "motorcycle", "machinery"]).optional(),
   }),

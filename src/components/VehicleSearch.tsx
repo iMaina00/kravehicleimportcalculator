@@ -186,7 +186,7 @@ export function VehicleSearch({ onSelect }: { onSelect: (record: SelectedRecord)
             <Card key={String(r["id"])} className="transition-colors hover:border-primary">
               <CardContent className="flex flex-wrap items-center justify-between gap-3 py-4">
                 <div className="min-w-0">
-                  <p className="truncate font-medium">
+                  <p className="break-words font-medium">
                     {String(r["make"] ?? "")} {String(r["model"] ?? "")}
                     {mn ? <span className="text-muted-foreground"> · {mn}</span> : null}
                   </p>

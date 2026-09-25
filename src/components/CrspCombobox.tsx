@@ -134,7 +134,7 @@ export function CrspCombobox({
                 i === highlight ? "bg-accent text-accent-foreground" : ""
               }`}
             >
-              <span className="truncate">{o.value}</span>
+              <span className="min-w-0 break-words">{o.value}</span>
               <span className="shrink-0 text-xs text-muted-foreground">{o.record_count}</span>
             </button>
           ))}
