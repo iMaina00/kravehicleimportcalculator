@@ -43,7 +43,29 @@ export function calculateImportTaxes(input: CalculationInput, rules: RuleSet): C
   const category = classification.code;
   const t = input.importType;
 
-  const customs = customsValue(pick(rules.taxRules, category, t, "customs_value"), crsp, dep.rate, extra);
+  const customsRule = pick(rules.taxRules, category, t, "customs_value");
+  const manual = input.vehicle.valuationSource === "manual_cif";
+  const cif = manual ? Number(input.vehicle.cifKes ?? input.vehicle.crspKes) : null;
+  if (manual) {
+    warnings.push(
+      "Valuation source: manual CIF / invoice value. The declared CIF is used directly as the customs value; the workbook's CRSP depreciation and divisor chain are not applied. REQUIRES VERIFICATION against the KRA assessment.",
+    );
+  }
+  const customs = manual
+    ? {
+        key: "customs_value",
+        label: "Customs value",
+        base: cif!,
+        baseLabel: "Declared CIF / invoice value (KES)",
+        rate: null,
+        fixedAmount: null,
+        formula: "Customs value = declared CIF / invoice value",
+        result: cif!,
+        sourceRuleId: null,
+        source: "User-entered CIF",
+        verificationStatus: "requires_verification",
+      }
+    : customsValue(customsRule, crsp, dep.rate, extra);
   const duty = importDuty(pick(rules.taxRules, category, t, "import_duty"), customs.result);
   const excise = exciseDuty(pick(rules.taxRules, category, t, "excise"), customs.result, duty.result);
   const vatItem = vat(pick(rules.taxRules, category, t, "vat"), customs.result, duty.result, excise.result);
@@ -74,11 +96,13 @@ export function calculateImportTaxes(input: CalculationInput, rules: RuleSet): C
     category: { code: category, reason: classification.reason },
     importType: t,
     ageYears: age,
-    crspKes: crsp,
+    valuationSource: manual ? "manual_cif" : "crsp",
+    cifKes: cif,
+    crspKes: manual ? 0 : crsp,
     depreciation: {
-      rate: dep.rate,
-      percentage: dep.rate * 100,
-      amount: crsp * dep.rate,
+      rate: manual ? 0 : dep.rate,
+      percentage: manual ? 0 : dep.rate * 100,
+      amount: manual ? 0 : crsp * dep.rate,
       ruleId: dep.ruleId,
       label: dep.label,
       source: dep.source,
