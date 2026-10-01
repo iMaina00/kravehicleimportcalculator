@@ -419,7 +419,7 @@ function ManualVehicleForm({
   const pick = (k: string, label: string, opts: string[]) => (
     <div>
       <Label>{label}</Label>
-      <Select value={values[k] || undefined} onValueChange={s(k)}>
+      <Select value={values[k] ?? ""} onValueChange={s(k)}>
         <SelectTrigger className="h-11" aria-label={label}>
           <SelectValue placeholder="Select" />
         </SelectTrigger>
