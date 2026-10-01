@@ -32,7 +32,7 @@ export const Route = createFileRoute("/rules")({
   errorComponent: ({ error }) => (
     <main className="mx-auto max-w-3xl px-4 py-16">
       <h1 className="text-xl font-semibold">The rule reference didn't load</h1>
-      <p className="mt-2 text-sm text-muted-foreground">{error.message}</p>
+      <p className="mt-2 text-sm text-muted-foreground">{(error as Error).message}</p>
     </main>
   ),
   component: RulesPage,
