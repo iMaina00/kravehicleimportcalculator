@@ -19,10 +19,10 @@ import {
 } from "@/components/ui/select";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Slider } from "@/components/ui/slider";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const fmt = new Intl.NumberFormat("en-KE", { maximumFractionDigits: 0 });
 const CRSP_CEILING = 50_000_000;
-const PAGE_SIZE = 25;
 
 type Row = Record<string, unknown>;
 
@@ -48,6 +48,7 @@ export function CrspVehicleSearch({ onSelect }: { onSelect: (record: SelectedRec
   const [sort, setSort] = useState<string>("make_asc");
   const [sortTouched, setSortTouched] = useState(false);
   const [page, setPage] = useState(0);
+  const [pageSize, setPageSize] = useState(20);
 
   useEffect(() => {
     const t = setTimeout(() => {
@@ -78,10 +79,10 @@ export function CrspVehicleSearch({ onSelect }: { onSelect: (record: SelectedRec
       crspMin: crspRange[0] > 0 ? crspRange[0] : null,
       crspMax: crspRange[1] < CRSP_CEILING ? crspRange[1] : null,
       sort: sort as "relevance",
-      limit: PAGE_SIZE,
-      offset: page * PAGE_SIZE,
+      limit: pageSize,
+      offset: page * pageSize,
     }),
-    [query, makes, models, trims, fuels, transmissions, drives, bodies, seats, ccMin, ccMax, crspRange, sort, page],
+    [pageSize, query, makes, models, trims, fuels, transmissions, drives, bodies, seats, ccMin, ccMax, crspRange, sort, page],
   );
 
   const run = useServerFn(crspSearch);
@@ -89,10 +90,13 @@ export function CrspVehicleSearch({ onSelect }: { onSelect: (record: SelectedRec
     queryKey: ["crsp-search", filters],
     queryFn: () => run({ data: filters }),
     staleTime: 30_000,
+    placeholderData: (prev) => prev,
   });
 
   const rows = (data?.records ?? []) as Row[];
   const total = data?.total ?? 0;
+  const pageCount = Math.max(1, Math.ceil(total / pageSize));
+  const firstLoad = isFetching && !data;
 
   const resetFilters = () => {
     setMakes([]);
@@ -244,7 +248,7 @@ export function CrspVehicleSearch({ onSelect }: { onSelect: (record: SelectedRec
               Filters
             </Button>
           </SheetTrigger>
-          <SheetContent side="left" className="w-[320px] overflow-y-auto">
+          <SheetContent side="left" className="w-[min(320px,90vw)] overflow-y-auto">
             <SheetHeader>
               <SheetTitle>Filters</SheetTitle>
             </SheetHeader>
@@ -256,7 +260,7 @@ export function CrspVehicleSearch({ onSelect }: { onSelect: (record: SelectedRec
           {isFetching ? "Searching…" : `${fmt.format(total)} vehicle${total === 1 ? "" : "s"} found`}
         </p>
 
-        <div className="ml-auto w-[190px]">
+        <div className="w-full sm:ml-auto sm:w-[190px]">
           <Select
             value={sort}
             onValueChange={(v) => {
@@ -282,9 +286,9 @@ export function CrspVehicleSearch({ onSelect }: { onSelect: (record: SelectedRec
       {chips.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {chips.map((c) => (
-            <Badge key={c.label} variant="secondary" className="gap-1">
+            <Badge key={c.label} variant="secondary" className="h-auto gap-1 whitespace-normal break-words py-1">
               {c.label}
-              <button type="button" aria-label={`Remove ${c.label}`} onClick={c.onRemove}>
+              <button type="button" className="p-1" aria-label={`Remove ${c.label}`} onClick={c.onRemove}>
                 <X className="h-3 w-3" />
               </button>
             </Badge>
@@ -295,55 +299,74 @@ export function CrspVehicleSearch({ onSelect }: { onSelect: (record: SelectedRec
         </div>
       )}
 
-      <div className="grid gap-6 lg:grid-cols-[260px_1fr]">
+      <div className="grid gap-6 lg:grid-cols-[260px_minmax(0,1fr)]">
         <aside className="hidden lg:block">{filterPanel}</aside>
 
-        <div className="space-y-3">
+        <div className="min-w-0 space-y-3" aria-busy={isFetching}>
           {error && <p className="text-sm text-destructive">Search failed: {(error as Error).message}</p>}
-          {!isFetching && rows.length === 0 && (
-            <p className="text-sm text-muted-foreground">No CRSP records match this search.</p>
+          {firstLoad && (
+            <div className="space-y-3" aria-label="Loading vehicles">
+              <p className="text-sm text-muted-foreground">Loading vehicles…</p>
+              {Array.from({ length: 4 }).map((_, i) => (
+                <Card key={i}>
+                  <CardContent className="space-y-3 py-4">
+                    <Skeleton className="h-5 w-3/4" />
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-1/2" />
+                    <Skeleton className="h-10 w-32" />
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           )}
+          {!isFetching && !error && rows.length === 0 && (
+            <div className="rounded-lg border border-dashed p-6 text-center">
+              <p className="font-medium">No vehicles found.</p>
+              <p className="mt-1 text-sm text-muted-foreground">Try changing your search or filters.</p>
+            </div>
+          )}
+          <div className={isFetching && data ? "space-y-3 opacity-60 transition-opacity" : "space-y-3"}>
 
           {rows.map((r) => {
             const crsp = r["crsp_kes"] == null ? null : Number(r["crsp_kes"]);
-            const specs = [
-              r["engine_capacity_raw"],
-              r["fuel_label"],
-              r["transmission_normalized"],
-              r["drive_normalized"],
-              r["body_normalized"],
-              r["seating"] ? `${String(r["seating"])} seats` : null,
-              r["gvw"] ? `GVW ${String(r["gvw"])}` : null,
-            ]
-              .filter(Boolean)
-              .map(String);
             const modelNumber = (r["model_number"] as string | null) ?? "";
+            const mk = String(r["make"] ?? "").trim();
+            const md = String(r["model"] ?? "").trim();
+            const name = md.toUpperCase().startsWith(mk.toUpperCase()) ? md : `${mk} ${md}`;
+            const details: [string, unknown][] = [
+              ["Model number", modelNumber || "—"],
+              ["Engine", r["engine_capacity_raw"]],
+              ["Fuel", r["fuel_label"]],
+              ["Transmission", r["transmission_normalized"]],
+              ["Drive", r["drive_normalized"]],
+              ["Body type", r["body_normalized"]],
+              ["Seating", r["seating"]],
+              ["GVW", r["gvw"]],
+            ];
             return (
               <Card key={String(r["id"])} className="transition-colors hover:border-primary">
-                <CardContent className="flex flex-wrap items-center justify-between gap-4 py-4">
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate font-semibold">
-                      {(() => {
-                        const mk = String(r["make"] ?? "").trim();
-                        const md = String(r["model"] ?? "").trim();
-                        // The CRSP Model column sometimes repeats the make; show it once.
-                        return md.toUpperCase().startsWith(mk.toUpperCase()) ? md : `${mk} ${md}`;
-                      })()}
-                    </p>
-                    <p className="text-sm text-muted-foreground">{specs.join(" | ")}</p>
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      Model number: {modelNumber ? modelNumber : "—"} · CRSP row {String(r["source_row"] ?? "")}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <div className="text-right">
+                <CardContent className="space-y-3 py-4">
+                  <p className="break-words text-base font-semibold leading-snug sm:text-lg">{name}</p>
+                  <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm sm:grid-cols-4">
+                    {details
+                      .filter(([, v]) => v != null && String(v).trim() !== "")
+                      .map(([k, v]) => (
+                        <div key={k} className="min-w-0">
+                          <dt className="text-xs text-muted-foreground">{k}</dt>
+                          <dd className="break-words font-medium">{String(v)}</dd>
+                        </div>
+                      ))}
+                  </dl>
+                  <div className="flex flex-col gap-3 border-t pt-3 sm:flex-row sm:items-end sm:justify-between">
+                    <div>
                       <p className="text-xs uppercase tracking-wide text-muted-foreground">CRSP</p>
-                      <p className="text-lg font-bold text-primary">
+                      <p className="break-words text-xl font-bold text-primary">
                         {crsp === null ? "Not in source" : `KES ${fmt.format(crsp)}`}
                       </p>
+                      <p className="text-xs text-muted-foreground">CRSP row {String(r["source_row"] ?? "")}</p>
                     </div>
                     <Button
-                      size="sm"
+                      className="h-11 w-full sm:w-auto"
                       disabled={crsp === null}
                       onClick={() =>
                         onSelect({
@@ -369,27 +392,85 @@ export function CrspVehicleSearch({ onSelect }: { onSelect: (record: SelectedRec
               </Card>
             );
           })}
+          </div>
 
-          {total > PAGE_SIZE && (
-            <div className="flex items-center justify-between pt-2">
-              <Button variant="outline" size="sm" disabled={page === 0} onClick={() => setPage((p) => p - 1)}>
-                Previous
-              </Button>
-              <p className="text-xs text-muted-foreground">
-                Showing {page * PAGE_SIZE + 1}–{Math.min((page + 1) * PAGE_SIZE, total)} of {fmt.format(total)}
-              </p>
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={(page + 1) * PAGE_SIZE >= total}
-                onClick={() => setPage((p) => p + 1)}
-              >
-                Next
-              </Button>
+          {total > 0 && (
+            <div className="space-y-3 pt-2">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                <p className="text-sm text-muted-foreground">
+                  Showing {fmt.format(page * pageSize + 1)} to {fmt.format(Math.min((page + 1) * pageSize, total))} of{" "}
+                  {fmt.format(total)} vehicles
+                </p>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-muted-foreground">Per page</span>
+                  <Select
+                    value={String(pageSize)}
+                    onValueChange={(v) => {
+                      setPageSize(Number(v));
+                      setPage(0);
+                    }}
+                  >
+                    <SelectTrigger className="w-[90px]" aria-label="Results per page">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {[20, 50, 100].map((n) => (
+                        <SelectItem key={n} value={String(n)}>
+                          {n}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              {pageCount > 1 && (
+                <div className="flex items-center justify-between gap-2">
+                  <Button variant="outline" className="h-11" disabled={page === 0} onClick={() => setPage((p) => p - 1)}>
+                    Previous
+                  </Button>
+                  <p className="text-sm sm:hidden">
+                    Page {page + 1} of {fmt.format(pageCount)}
+                  </p>
+                  <div className="hidden flex-wrap items-center gap-1 sm:flex">
+                    {pageWindow(page, pageCount).map((p, i) =>
+                      p === -1 ? (
+                        <span key={`gap${i}`} className="px-2 text-muted-foreground">…</span>
+                      ) : (
+                        <Button
+                          key={p}
+                          size="sm"
+                          variant={p === page ? "default" : "ghost"}
+                          onClick={() => setPage(p)}
+                        >
+                          {p + 1}
+                        </Button>
+                      ),
+                    )}
+                  </div>
+                  <Button
+                    variant="outline"
+                    className="h-11"
+                    disabled={page + 1 >= pageCount}
+                    onClick={() => setPage((p) => p + 1)}
+                  >
+                    Next
+                  </Button>
+                </div>
+              )}
             </div>
           )}
         </div>
       </div>
     </div>
   );
+}
+
+function pageWindow(page: number, count: number): number[] {
+  const start = Math.max(0, Math.min(page - 2, count - 5));
+  const end = Math.min(count, start + 5);
+  const out: number[] = [];
+  if (start > 0) out.push(0, -1);
+  for (let i = start; i < end; i++) out.push(i);
+  if (end < count) out.push(-1, count - 1);
+  return out;
 }
