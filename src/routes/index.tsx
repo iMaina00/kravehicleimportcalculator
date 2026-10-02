@@ -426,7 +426,7 @@ function ManualVehicleForm({
         <SelectContent>
           {opts.map((o) => (
             <SelectItem key={o} value={o}>
-              {o.charAt(0) + o.slice(1).toLowerCase()}
+              {o.length > 3 && o === o.toUpperCase() ? o.charAt(0) + o.slice(1).toLowerCase() : o}
             </SelectItem>
           ))}
         </SelectContent>
