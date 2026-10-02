@@ -17,7 +17,8 @@ export function ResultsBreakdown({
   const lines = [result.importDuty, result.exciseDuty, result.vat, result.rdl, result.idf];
   const manual = result.valuationSource === "manual_cif";
   const vehicleName = [result.vehicle.make, result.vehicle.model].filter(Boolean).join(" ");
-  const vehicleCif = result.otherImportCosts.total;
+  const vehicleCif =
+    manual && result.otherImportCosts.total === 0 ? (result.cifKes ?? 0) : result.otherImportCosts.total;
   const finalCost = vehicleCif + result.totalGovernmentTaxes + clearingTotal;
 
   return (
