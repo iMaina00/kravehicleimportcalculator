@@ -218,6 +218,7 @@ const crspSearchSchema = z.object({
   drives: strList,
   bodies: strList,
   seats: z.array(z.number().int().min(0).max(200)).max(20).default([]),
+  modelNumbers: strList,
   ccMin: z.number().int().min(0).max(30000).nullable().default(null),
   ccMax: z.number().int().min(0).max(30000).nullable().default(null),
   crspMin: z.number().min(0).max(1_000_000_000).nullable().default(null),
@@ -247,6 +248,7 @@ export const crspSearch = createServerFn({ method: "POST" })
       p_transmissions: nz(data.transmissions),
       p_drives: nz(data.drives),
       p_bodies: nz(data.bodies),
+      p_model_numbers: nz(data.modelNumbers),
       p_seats: nz(data.seats),
       p_cc_min: data.ccMin,
       p_cc_max: data.ccMax,
@@ -263,7 +265,7 @@ export const crspSearch = createServerFn({ method: "POST" })
   });
 
 const crspFilterSchema = z.object({
-  field: z.enum(["make", "model", "trim", "fuel", "transmission", "drive", "body", "seating"]),
+  field: z.enum(["make", "model", "trim", "model_code", "fuel", "transmission", "drive", "body", "seating"]),
   query: z.string().max(80).default(""),
   makes: strList,
   models: strList,
