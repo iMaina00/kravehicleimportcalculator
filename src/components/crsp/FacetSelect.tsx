@@ -19,6 +19,7 @@ export type FacetField =
   | "make"
   | "model"
   | "trim"
+  | "model_code"
   | "fuel"
   | "transmission"
   | "drive"
@@ -69,8 +70,16 @@ export function FacetSelect({
 
   const options = data?.options ?? [];
 
+  const handleOpenChange = (next: boolean) => {
+    setOpen(next);
+    if (!next) setInput("");
+  };
+
   const toggle = (value: string) => {
     onChange(selected.includes(value) ? selected.filter((v) => v !== value) : [...selected, value]);
+    // Close immediately after a selection; the choice stays visible in the field.
+    setOpen(false);
+    setInput("");
   };
 
   const summary =
@@ -83,7 +92,7 @@ export function FacetSelect({
   return (
     <div className="space-y-1">
       <p className="text-xs font-medium text-muted-foreground">{label}</p>
-      <Popover open={open} onOpenChange={setOpen} modal>
+      <Popover open={open} onOpenChange={handleOpenChange} modal>
         <PopoverTrigger asChild>
           <Button
             variant="outline"
