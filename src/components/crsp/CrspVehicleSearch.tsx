@@ -37,6 +37,7 @@ export function CrspVehicleSearch({ onSelect }: { onSelect: (record: SelectedRec
   const [makes, setMakes] = useState<string[]>([]);
   const [models, setModels] = useState<string[]>([]);
   const [trims, setTrims] = useState<string[]>([]);
+  const [modelCodes, setModelCodes] = useState<string[]>([]);
   const [fuels, setFuels] = useState<string[]>([]);
   const [transmissions, setTransmissions] = useState<string[]>([]);
   const [drives, setDrives] = useState<string[]>([]);
@@ -45,7 +46,7 @@ export function CrspVehicleSearch({ onSelect }: { onSelect: (record: SelectedRec
   const [ccMin, setCcMin] = useState("");
   const [ccMax, setCcMax] = useState("");
   const [crspRange, setCrspRange] = useState<[number, number]>([0, CRSP_CEILING]);
-  const [sort, setSort] = useState<string>("make_asc");
+  const [sort, setSort] = useState<string>("crsp_desc");
   const [sortTouched, setSortTouched] = useState(false);
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(20);
@@ -58,9 +59,9 @@ export function CrspVehicleSearch({ onSelect }: { onSelect: (record: SelectedRec
     return () => clearTimeout(t);
   }, [input]);
 
-  // Relevance by default when searching, Make A-Z when browsing.
+  // Relevance by default when searching, CRSP High to Low when browsing.
   useEffect(() => {
-    if (!sortTouched) setSort(query ? "relevance" : "make_asc");
+    if (!sortTouched) setSort(query ? "relevance" : "crsp_desc");
   }, [query, sortTouched]);
 
   const filters = useMemo(
@@ -69,6 +70,7 @@ export function CrspVehicleSearch({ onSelect }: { onSelect: (record: SelectedRec
       makes,
       models,
       trims,
+      modelNumbers: modelCodes,
       fuels,
       transmissions,
       drives,
@@ -82,7 +84,7 @@ export function CrspVehicleSearch({ onSelect }: { onSelect: (record: SelectedRec
       limit: pageSize,
       offset: page * pageSize,
     }),
-    [pageSize, query, makes, models, trims, fuels, transmissions, drives, bodies, seats, ccMin, ccMax, crspRange, sort, page],
+    [pageSize, query, makes, models, trims, modelCodes, fuels, transmissions, drives, bodies, seats, ccMin, ccMax, crspRange, sort, page],
   );
 
   const run = useServerFn(crspSearch);
@@ -102,6 +104,7 @@ export function CrspVehicleSearch({ onSelect }: { onSelect: (record: SelectedRec
     setMakes([]);
     setModels([]);
     setTrims([]);
+    setModelCodes([]);
     setFuels([]);
     setTransmissions([]);
     setDrives([]);
@@ -110,6 +113,8 @@ export function CrspVehicleSearch({ onSelect }: { onSelect: (record: SelectedRec
     setCcMin("");
     setCcMax("");
     setCrspRange([0, CRSP_CEILING]);
+    setSort("crsp_desc");
+    setSortTouched(false);
     setPage(0);
   };
 
@@ -126,6 +131,7 @@ export function CrspVehicleSearch({ onSelect }: { onSelect: (record: SelectedRec
     ...chipsFor(makes, setMakes, "Make"),
     ...chipsFor(models, setModels, "Model"),
     ...chipsFor(trims, setTrims, "Trim"),
+    ...chipsFor(modelCodes, setModelCodes, "Model code"),
     ...chipsFor(fuels, setFuels, "Fuel"),
     ...chipsFor(transmissions, setTransmissions, "Transmission"),
     ...chipsFor(drives, setDrives, "Drive"),
@@ -158,6 +164,16 @@ export function CrspVehicleSearch({ onSelect }: { onSelect: (record: SelectedRec
         models={models}
         disabled={models.length === 0}
         disabledHint="Select a model first"
+      />
+      <FacetSelect
+        field="model_code"
+        label="Model Code"
+        selected={modelCodes}
+        onChange={wrap(setModelCodes)}
+        makes={makes}
+        models={models}
+        disabled={makes.length === 0}
+        disabledHint="Select a make first"
       />
       <FacetSelect field="fuel" label="Fuel" selected={fuels} onChange={wrap(setFuels)} makes={makes} models={models} trims={trims} />
       <FacetSelect
