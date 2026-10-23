@@ -802,6 +802,7 @@ export type Database = {
           p_fuels?: string[]
           p_limit?: number
           p_makes?: string[]
+          p_model_numbers?: string[]
           p_models?: string[]
           p_offset?: number
           p_query?: string
