@@ -165,16 +165,7 @@ export function CrspVehicleSearch({ onSelect }: { onSelect: (record: SelectedRec
         disabled={models.length === 0}
         disabledHint="Select a model first"
       />
-      <FacetSelect
-        field="model_code"
-        label="Model Code"
-        selected={modelCodes}
-        onChange={wrap(setModelCodes)}
-        makes={makes}
-        models={models}
-        disabled={makes.length === 0}
-        disabledHint="Select a make first"
-      />
+      <FacetSelect field="model_code" label="Model Code" selected={modelCodes} onChange={wrap(setModelCodes)} />
       <FacetSelect field="fuel" label="Fuel" selected={fuels} onChange={wrap(setFuels)} makes={makes} models={models} trims={trims} />
       <FacetSelect
         field="transmission"
