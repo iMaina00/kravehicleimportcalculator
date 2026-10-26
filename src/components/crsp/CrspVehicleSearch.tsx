@@ -59,10 +59,8 @@ export function CrspVehicleSearch({ onSelect }: { onSelect: (record: SelectedRec
     return () => clearTimeout(t);
   }, [input]);
 
-  // Relevance by default when searching, CRSP High to Low when browsing.
-  useEffect(() => {
-    if (!sortTouched) setSort(query ? "relevance" : "crsp_desc");
-  }, [query, sortTouched]);
+  // CRSP High to Low is the default for both browsing and after a search;
+  // the user's manual sort choice is respected via sortTouched (no auto-switch).
 
   const filters = useMemo(
     () => ({
