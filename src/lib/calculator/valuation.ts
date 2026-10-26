@@ -24,7 +24,7 @@ export function customsValue(
     key: "customs_value",
     label: "Customs value",
     base: crsp,
-    baseLabel: "CRSP (KES)",
+    baseLabel: baseLabelOverride ?? "CRSP (KES)",
     rate: null,
     fixedAmount: null,
     formula: `((CRSP / ${first}) * (1 - ${depreciationRate}) / ${rest.join(" / ") || "1"}) * (1 - ${extraDepreciation})  [divisor chain ${chain}]`,
