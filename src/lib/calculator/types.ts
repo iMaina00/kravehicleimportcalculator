@@ -74,9 +74,9 @@ export interface VehicleInput {
   fuel?: string | null | undefined;
   bodyType?: string | null | undefined;
   crspKes: number;
-  /** "crsp" (default) uses the CRSP schedule; "manual_cif" uses a user-declared CIF / invoice value in KES. */
+  /** "crsp" (default) uses the CRSP schedule; "manual_cif" (legacy name) means the user entered the vehicle's value, which is treated as the CRSP: workbook depreciation and divisor chain still apply. */
   valuationSource?: "crsp" | "manual_cif" | undefined;
-  /** Declared CIF / invoice value in KES, used only when valuationSource is "manual_cif". */
+  /** The vehicle value the user entered (KES), used only when valuationSource is "manual_cif". */
   cifKes?: number | null | undefined;
   /** Overrides automatic classification when the user knows the category. */
   categoryOverride?: CategoryCode | null | undefined;
