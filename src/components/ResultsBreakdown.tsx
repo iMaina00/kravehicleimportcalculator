@@ -30,18 +30,16 @@ export function ResultsBreakdown({
         <CardContent className="space-y-4">
           {vehicleName && <p className="break-words text-lg font-semibold">{vehicleName}</p>}
           <dl className="grid gap-3 sm:grid-cols-3">
-            <Stat label="Valuation source" value={manual ? "Manual CIF" : "CRSP Database"} />
+            <Stat label="Valuation source" value={manual ? "Manual entry (not in CRSP)" : "CRSP Database"} />
             {manual ? (
-              <Stat label="CIF / Invoice value" value={kes.format(result.cifKes ?? 0)} />
+              <Stat label="Vehicle value entered (KES)" value={kes.format(result.cifKes ?? 0)} />
             ) : (
-              <>
-                <Stat label="CRSP from the schedule" value={kes.format(result.crspKes)} />
-                <Stat
-                  label={`Depreciation (${result.ageYears} yr, ${result.depreciation.label})`}
-                  value={`${result.depreciation.percentage.toFixed(0)}%`}
-                />
-              </>
+              <Stat label="CRSP from the schedule" value={kes.format(result.crspKes)} />
             )}
+            <Stat
+              label={`Depreciation (${result.ageYears} yr, ${result.depreciation.label})`}
+              value={`${result.depreciation.percentage.toFixed(0)}%`}
+            />
             <Stat label="Customs value" value={kes.format(result.customsValue.result)} />
           </dl>
           <p className="break-words rounded-md bg-muted p-3 font-mono text-xs text-muted-foreground">
