@@ -45,27 +45,23 @@ export function calculateImportTaxes(input: CalculationInput, rules: RuleSet): C
 
   const customsRule = pick(rules.taxRules, category, t, "customs_value");
   const manual = input.vehicle.valuationSource === "manual_cif";
-  const cif = manual ? Number(input.vehicle.cifKes ?? input.vehicle.crspKes) : null;
+  const declaredValue = Number(input.vehicle.cifKes ?? input.vehicle.crspKes);
+  // The workbook's only customs-value formula starts from the CRSP:
+  //   ((CRSP / d1) * (1 - depreciation) / d2 / d3 ...) * (1 - extra)
+  // For a vehicle not listed in CRSP the entered value stands in for the CRSP, so the
+  // depreciation schedule and divisor chain apply unchanged.
+  const customs = customsValue(
+    customsRule,
+    manual ? declaredValue : crsp,
+    dep.rate,
+    extra,
+    manual ? "Vehicle value entered (KES)" : undefined,
+  );
   if (manual) {
     warnings.push(
-      "Valuation source: manual CIF / invoice value. The declared CIF is used directly as the customs value; the workbook's CRSP depreciation and divisor chain are not applied. REQUIRES VERIFICATION against the KRA assessment.",
+      "Valuation source: vehicle not listed in CRSP. The value you entered is treated as the CRSP; the workbook's depreciation schedule (from the year of manufacture) and the divisor chain are applied exactly as for a listed vehicle.",
     );
   }
-  const customs = manual
-    ? {
-        key: "customs_value",
-        label: "Customs value",
-        base: cif!,
-        baseLabel: "Declared CIF / invoice value (KES)",
-        rate: null,
-        fixedAmount: null,
-        formula: "Customs value = declared CIF / invoice value",
-        result: cif!,
-        sourceRuleId: null,
-        source: "User-entered CIF",
-        verificationStatus: "requires_verification",
-      }
-    : customsValue(customsRule, crsp, dep.rate, extra);
   const duty = importDuty(pick(rules.taxRules, category, t, "import_duty"), customs.result);
   const excise = exciseDuty(pick(rules.taxRules, category, t, "excise"), customs.result, duty.result);
   const vatItem = vat(pick(rules.taxRules, category, t, "vat"), customs.result, duty.result, excise.result);
