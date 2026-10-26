@@ -156,6 +156,31 @@ describe("calculateImportTaxes vs TEMPLATE 2025", () => {
     expect(res.warnings.join(" ")).toContain("no exchange rate for JPY");
   });
 
+  it("applies the workbook depreciation schedule and divisor chain to a vehicle not listed in CRSP", () => {
+    const res = calculateImportTaxes(
+      {
+        vehicle: {
+          crspKes: 4_000_000,
+          cifKes: 4_000_000,
+          valuationSource: "manual_cif",
+          engineCapacityCc: 2500,
+          fuel: "PETROL",
+          recordType: "vehicle",
+        },
+        importType: "direct",
+        yearOfManufacture: 2020,
+        importDate: "2025-07-01",
+        currency: "KES",
+      },
+      rules,
+    );
+    expect(res.depreciation.rate).toBe(0.5);
+    const customs = ((4_000_000 / 1.25) * (1 - 0.5)) / 1.35 / 1.25 / 1.16;
+    expect(res.customsValue.result).toBeCloseTo(customs, 6);
+    expect(res.customsValue.formula).toContain("CRSP");
+    expect(res.warnings.join(" ")).toContain("vehicle not listed in CRSP");
+  });
+
   it("routes electric vehicles to the electric tabulation via the category override path", () => {
     const res = calculateImportTaxes(
       {
