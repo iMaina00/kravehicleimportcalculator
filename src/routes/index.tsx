@@ -93,7 +93,7 @@ function Index() {
     const e: string[] = [];
     if (!manual.make.trim()) e.push("Enter the make.");
     if (!manual.model.trim()) e.push("Enter the model.");
-    if (!(Number(manual.cif) > 0)) e.push("Enter the CIF / invoice value in KES.");
+    if (!(Number(manual.cif) > 0)) e.push("Enter the vehicle value in KES.");
     if (!manual.fuel) e.push("Select the fuel type.");
     if (manual.fuel !== "ELECTRIC" && !(Number(manual.engineCc) > 0)) e.push("Enter the engine capacity in cc.");
     if (!manual.transmission) e.push("Select the transmission.");
@@ -436,8 +436,9 @@ function ManualVehicleForm({
   return (
     <div className="space-y-4">
       <p className="text-sm text-muted-foreground">
-        The CIF / invoice value you enter is used as the customs value instead of a CRSP record. All taxes then run
-        through the same calculator.
+        Enter the vehicle's current value (KES). It is treated as the CRSP: the workbook depreciation schedule (from
+        the manufacturing year) and the category divisor chain are applied before the taxes, exactly as for a listed
+        vehicle.
       </p>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {text("make", "Make", "Enter make")}
@@ -448,7 +449,7 @@ function ManualVehicleForm({
           <Input id="m-yom" className="h-11" inputMode="numeric" placeholder="YYYY" value={year} onChange={(e) => setYear(e.target.value)} />
         </div>
         {text("regYear", "Registration year (if previously registered)", "YYYY", true)}
-        {text("cif", "CIF / Invoice value (KES)", "e.g. 8500000", true)}
+        {text("cif", "Vehicle value / CRSP (KES)", "e.g. 8500000", true)}
         {text("engineCc", "Engine capacity (cc)", "e.g. 2000", true)}
         {pick("fuel", "Fuel type", FUELS)}
         {pick("transmission", "Transmission", TRANSMISSIONS)}
