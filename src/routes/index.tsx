@@ -91,14 +91,11 @@ function Index() {
 
   const validateManual = (): string[] => {
     const e: string[] = [];
-    if (!manual.make.trim()) e.push("Enter the make.");
-    if (!manual.model.trim()) e.push("Enter the model.");
     if (!(Number(manual.cif) > 0)) e.push("Enter the vehicle value in KES.");
     if (!manual.fuel) e.push("Select the fuel type.");
     if (manual.fuel !== "ELECTRIC" && !(Number(manual.engineCc) > 0)) e.push("Enter the engine capacity in cc.");
     if (!manual.transmission) e.push("Select the transmission.");
     if (!manual.drive) e.push("Select the drive configuration.");
-    if (!manual.bodyType) e.push("Select the vehicle type.");
     const y = Number(year);
     if (!(y >= 1950 && y <= new Date().getFullYear() + 1)) e.push("Enter a valid year of manufacture.");
     if (importType === "previously_registered" && !(Number(manual.regYear) >= 1950))
@@ -119,11 +116,11 @@ function Index() {
             mode === "manual"
               ? {
                   id: null,
-                  make: manual.make.trim(),
-                  model: [manual.model.trim(), manual.trim.trim()].filter(Boolean).join(" "),
+                  make: manual.make.trim() || null,
+                  model: [manual.model.trim(), manual.trim.trim()].filter(Boolean).join(" ") || null,
                   engineCapacityCc: manual.engineCc ? Math.round(Number(manual.engineCc)) : null,
                   fuel: manual.fuel,
-                  bodyType: manual.bodyType,
+                  bodyType: manual.bodyType || null,
                   crspKes: Number(manual.cif),
                   valuationSource: "manual_cif" as const,
                   cifKes: Number(manual.cif),
