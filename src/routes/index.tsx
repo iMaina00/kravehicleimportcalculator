@@ -438,8 +438,8 @@ function ManualVehicleForm({
         vehicle.
       </p>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {text("make", "Make", "Enter make")}
-        {text("model", "Model", "Enter model")}
+        {text("make", "Make (optional)", "Enter make")}
+        {text("model", "Model (optional)", "Enter model")}
         {text("trim", "Trim (optional)", "Enter trim")}
         <div>
           <Label htmlFor="m-yom">Manufacturing year</Label>
@@ -451,7 +451,7 @@ function ManualVehicleForm({
         {pick("fuel", "Fuel type", FUELS)}
         {pick("transmission", "Transmission", TRANSMISSIONS)}
         {pick("drive", "Drive configuration", DRIVES)}
-        {pick("bodyType", "Vehicle type", BODIES)}
+        {pick("bodyType", "Vehicle type (optional)", BODIES)}
       </div>
     </div>
   );
