@@ -31,14 +31,14 @@ export function ClearingCosts({
   onChange: (v: ClearingValues) => void;
 }) {
   return (
-    <Card>
-      <CardHeader className="pb-2">
-        <CardTitle className="text-base">Clearing / Port Cost Estimates</CardTitle>
-        <p className="text-sm text-muted-foreground">
+    <div className="glass-chip rounded-2xl border border-border p-6">
+      <div className="pb-2">
+        <p className="font-display text-base font-semibold">Clearing / Port Cost Estimates</p>
+        <p className="mt-1 text-sm text-muted-foreground">
           Estimates only — edit any amount. These are added after the KRA taxes and are not part of the tax calculation.
         </p>
-      </CardHeader>
-      <CardContent className="space-y-4">
+      </div>
+      <div className="space-y-4">
         <div className="grid gap-3 sm:grid-cols-2">
           {DEFAULT_CLEARING_COSTS.map((c) => (
             <div key={c.key}>
@@ -53,16 +53,18 @@ export function ClearingCosts({
             </div>
           ))}
         </div>
-        <div className="flex flex-col gap-3 border-t pt-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-3 border-t border-border/60 pt-3 sm:flex-row sm:items-center sm:justify-between">
           <p>
             <span className="text-sm text-muted-foreground">Total Clearing / Port Costs</span>
-            <span className="block text-xl font-bold">KES {fmt.format(clearingTotal(values))}</span>
+            <span className="block font-display text-xl font-bold text-acid tabular-nums">
+              KES {fmt.format(clearingTotal(values))}
+            </span>
           </p>
           <Button variant="outline" className="h-11" onClick={() => onChange(defaultClearingValues())}>
             Reset to Defaults
           </Button>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

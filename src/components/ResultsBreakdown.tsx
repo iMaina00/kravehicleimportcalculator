@@ -23,12 +23,12 @@ export function ResultsBreakdown({
 
   return (
     <div className="space-y-6">
-      <Card>
+      <div className="glass-chip rounded-2xl border border-border p-6">
         <CardHeader className="pb-2">
           <CardTitle className="text-base">Vehicle details &amp; valuation</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          {vehicleName && <p className="break-words text-lg font-semibold">{vehicleName}</p>}
+          {vehicleName && <p className="break-words font-display text-lg font-semibold">{vehicleName}</p>}
           <dl className="grid gap-3 sm:grid-cols-3">
             <Stat label="Valuation source" value={manual ? "Manual entry (not in CRSP)" : "CRSP Database"} />
             {manual ? (
@@ -42,48 +42,48 @@ export function ResultsBreakdown({
             />
             <Stat label="Customs value" value={kes.format(result.customsValue.result)} />
           </dl>
-          <p className="break-words rounded-md bg-muted p-3 font-mono text-xs text-muted-foreground">
+          <p className="break-words rounded-lg border border-border/60 bg-black/20 p-3 font-mono text-xs text-muted-foreground">
             {result.customsValue.formula}
           </p>
         </CardContent>
-      </Card>
+      </div>
 
-      <Card>
+      <div className="glass-chip rounded-2xl border border-border p-6">
         <CardHeader className="pb-2">
           <CardTitle className="text-base">KRA taxes</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           {lines.map((l) => (
-            <div key={l.key} className="grid gap-1 border-b pb-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:gap-4">
+            <div key={l.key} className="grid gap-1 border-b border-border/60 pb-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:gap-4">
               <div className="min-w-0">
                 <p className="font-medium">
                   {l.label}{" "}
-                  <span className="text-sm font-normal text-muted-foreground">
+                  <span className="text-sm font-normal text-primary tabular-nums">
                     ({l.rate === null ? "Fixed" : `${(l.rate * 100).toFixed(2)}%`})
                   </span>
                 </p>
-                <p className="break-words text-sm text-muted-foreground">
+                <p className="break-words text-sm text-muted-foreground tabular-nums">
                   {l.baseLabel}: {kes.format(l.base)}
                 </p>
                 <p className="break-words font-mono text-[11px] text-muted-foreground">{l.formula}</p>
               </div>
-              <p className="font-semibold sm:text-right">{kes.format(l.result)}</p>
+              <p className="font-semibold tabular-nums sm:text-right">{kes.format(l.result)}</p>
             </div>
           ))}
-          <div className="flex flex-wrap items-baseline justify-between gap-2">
+          <div className="flex flex-wrap items-baseline justify-between gap-2 pt-1">
             <p className="font-semibold">Total government taxes &amp; levies</p>
-            <p className="text-lg font-bold">{kes.format(result.totalGovernmentTaxes)}</p>
+            <p className="font-display text-lg font-bold tabular-nums">{kes.format(result.totalGovernmentTaxes)}</p>
           </div>
           {result.importType === "previously_registered" && (
             <div className="flex flex-wrap items-baseline justify-between gap-2 text-sm text-muted-foreground">
               <p>Workbook total for previously registered units (duty + excise + VAT only)</p>
-              <p>{kes.format(result.workbookPreviouslyRegisteredTotal)}</p>
+              <p className="tabular-nums">{kes.format(result.workbookPreviouslyRegisteredTotal)}</p>
             </div>
           )}
         </CardContent>
-      </Card>
+      </div>
 
-      <Card className="border-primary">
+      <div className="rounded-2xl border border-primary/50 bg-primary/[0.07] p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_12px_36px_rgba(36,91,255,0.18)]">
         <CardHeader className="pb-2">
           <CardTitle className="text-base">Final estimated cost</CardTitle>
         </CardHeader>
@@ -98,9 +98,9 @@ export function ResultsBreakdown({
           />
           <Row label="KRA taxes" value={kes.format(result.totalGovernmentTaxes)} />
           <Row label="Clearing / Port costs (editable estimates)" value={kes.format(clearingTotal)} />
-          <div className="flex flex-wrap items-baseline justify-between gap-2 border-t pt-3">
+          <div className="flex flex-wrap items-baseline justify-between gap-2 border-t border-primary/30 pt-3">
             <p className="font-semibold">Final Estimated Cost</p>
-            <p className="text-2xl font-bold text-primary">{kes.format(finalCost)}</p>
+            <p className="font-display text-3xl font-bold text-acid tabular-nums">{kes.format(finalCost)}</p>
           </div>
           {vehicleCif === 0 && (
             <p className="text-xs text-muted-foreground">
@@ -108,9 +108,9 @@ export function ResultsBreakdown({
             </p>
           )}
         </CardContent>
-      </Card>
+      </div>
 
-      <Card>
+      <div className="glass-chip rounded-2xl border border-border p-6">
         <CardHeader className="pb-2">
           <CardTitle className="text-base">Provenance</CardTitle>
         </CardHeader>
@@ -127,7 +127,7 @@ export function ResultsBreakdown({
             {result.versions.depreciationVersionId}
           </p>
         </CardContent>
-      </Card>
+      </div>
 
       {result.warnings.length > 0 && (
         <Alert>
@@ -154,16 +154,16 @@ function Row({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex flex-wrap items-baseline justify-between gap-2">
       <p className="min-w-0 break-words text-sm text-muted-foreground">{label}</p>
-      <p className="font-semibold">{value}</p>
+      <p className="font-semibold tabular-nums">{value}</p>
     </div>
   );
 }
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg border bg-card p-3">
+    <div className="glass-chip rounded-xl border border-border p-3">
       <dt className="text-xs text-muted-foreground">{label}</dt>
-      <dd className="mt-1 break-words text-lg font-semibold">{value}</dd>
+      <dd className="mt-1 break-words font-display text-lg font-semibold tabular-nums">{value}</dd>
     </div>
   );
 }
