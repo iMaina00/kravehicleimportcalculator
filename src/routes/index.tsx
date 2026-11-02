@@ -2,6 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
+import { Car, Landmark, ListChecks } from "lucide-react";
 import { VehicleSearch, type SelectedRecord } from "@/components/VehicleSearch";
 import { CrspVehicleSearch } from "@/components/crsp/CrspVehicleSearch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -56,6 +57,30 @@ const CATEGORIES: { value: CategoryCode; label: string }[] = [
   { value: "SPECIAL_PURPOSE", label: "Special purpose vehicle" },
   { value: "HEAVY_MACHINERY", label: "Tractor / grader / heavy machinery" },
 ];
+
+function StepHeading({
+  step,
+  title,
+  icon,
+}: {
+  step: string;
+  title: string;
+  icon: React.ReactNode;
+}) {
+  return (
+    <CardHeader className="pb-2">
+      <div className="flex items-center gap-3">
+        <span className="glass-chip flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border text-xs font-semibold text-acid tabular-nums">
+          {step}
+        </span>
+        <CardTitle className="flex items-center gap-2 break-words text-base">
+          {icon}
+          {title}
+        </CardTitle>
+      </div>
+    </CardHeader>
+  );
+}
 
 function Index() {
   const [record, setRecord] = useState<SelectedRecord | null>(null);
@@ -155,230 +180,281 @@ function Index() {
   });
 
   return (
-    <main className="mx-auto max-w-5xl overflow-x-hidden px-3 py-6 sm:px-4 sm:py-10">
-      <header className="mb-8">
-        <p className="text-xs font-semibold uppercase tracking-widest text-primary">CRSP July 2025 schedule</p>
-        <h1 className="mt-1 text-2xl font-bold tracking-tight sm:text-4xl">
-          Kenya vehicle import tax &amp; duty calculator
+    <main className="mx-auto max-w-5xl overflow-x-hidden px-3 pb-16 sm:px-4 sm:pb-20">
+      {/* Floating navigation */}
+      <nav className="sticky top-3 z-40 mb-8 flex justify-center px-1 sm:top-4">
+        <div className="glass-float flex w-full max-w-3xl items-center justify-between gap-3 rounded-2xl border border-border py-2.5 pl-3 pr-2.5">
+          <Link to="/" className="flex min-w-0 items-center gap-2.5">
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-[0_4px_16px_rgba(36,91,255,0.4)]">
+              <Car className="h-4.5 w-4.5" />
+            </span>
+            <span className="min-w-0">
+              <span className="block truncate font-display text-sm font-semibold leading-tight">
+                Fast Imports Kenya
+              </span>
+              <span className="block truncate text-[11px] leading-tight text-muted-foreground">
+                Import tax &amp; duty calculator
+              </span>
+            </span>
+          </Link>
+          <div className="flex items-center gap-2">
+            <Link
+              to="/rules"
+              className="glass-chip hidden rounded-full border border-border px-3.5 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-white/10 sm:inline-block"
+            >
+              Rules &amp; depreciation
+            </Link>
+            <Link
+              to="/rules"
+              className="glass-chip inline-block rounded-full border border-border p-2 text-foreground transition-colors hover:bg-white/10 sm:hidden"
+              aria-label="Tax rules and depreciation"
+            >
+              <Landmark className="h-4 w-4" />
+            </Link>
+          </div>
+        </div>
+      </nav>
+
+      <header className="mb-10">
+        <span className="glass-chip inline-flex items-center gap-2 rounded-full border border-border px-3 py-1 text-xs font-medium text-muted-foreground">
+          <span className="h-1.5 w-1.5 rounded-full bg-acid" />
+          CRSP July 2025 schedule · applied as the 2026 workbook
+        </span>
+        <h1 className="mt-4 max-w-3xl font-display text-3xl font-bold leading-tight tracking-tight sm:text-5xl">
+          Kenya vehicle import tax &amp;{" "}
+          <span className="text-primary">duty calculator</span>
         </h1>
-        <p className="mt-2 max-w-2xl text-muted-foreground">
+        <p className="mt-4 max-w-2xl text-muted-foreground">
           Pick the exact unit from the official Current Retail Selling Price schedule, then see duty, excise, VAT, the
           Railway Development Levy and the Import Declaration Fee computed step by step from the published tabulations.
         </p>
-        <Link to="/rules" className="mt-3 inline-block text-sm font-medium text-primary underline">
-          View the tax rules and depreciation schedules
+        <Link to="/rules" className="mt-4 inline-block text-sm font-medium text-primary underline-offset-4 hover:underline">
+          View the tax rules and depreciation schedules →
         </Link>
       </header>
 
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle className="text-base">1. Find the unit</CardTitle>
-        </CardHeader>
-        <CardContent className="px-3 sm:px-6">
-          <p className="mb-2 text-sm font-medium">Vehicle source</p>
-          <div className="mb-5 grid grid-cols-1 gap-2 sm:grid-cols-2" role="radiogroup" aria-label="Vehicle source">
-            {[
-              { v: "crsp" as const, t: "CRSP Listed Vehicle", d: "Option 1: use a CRSP record" },
-              { v: "manual" as const, t: "Vehicle Not Listed in CRSP", d: "Option 2: enter vehicle details manually" },
-            ].map((o) => (
-              <button
-                key={o.v}
-                type="button"
-                role="radio"
-                aria-checked={mode === o.v}
-                onClick={() => {
-                  setMode(o.v);
-                  calc.reset();
-                  setManualErrors([]);
-                }}
-                className={`rounded-lg border p-3 text-left transition-colors ${
-                  mode === o.v ? "border-primary bg-secondary" : "hover:border-primary"
-                }`}
-              >
-                <span className="block font-semibold">{o.t}</span>
-                <span className="block text-sm text-muted-foreground">{o.d}</span>
-              </button>
-            ))}
-          </div>
-          {mode === "manual" ? (
-            <ManualVehicleForm values={manual} set={setM} year={year} setYear={setYear} />
-          ) : (
-          <Tabs value={tab} onValueChange={setTab}>
-            <TabsList className="mb-4 h-auto w-full flex-wrap sm:w-auto">
-              <TabsTrigger value="vehicle">Motor vehicles</TabsTrigger>
-              <TabsTrigger value="other">Motorcycles &amp; machinery</TabsTrigger>
-            </TabsList>
-            <TabsContent value="vehicle">
-              <CrspVehicleSearch
-                onSelect={(r) => {
-                  setRecord(r);
-                  calc.reset();
-                }}
-              />
-            </TabsContent>
-            <TabsContent value="other">
-              <VehicleSearch
-                onSelect={(r) => {
-                  setRecord(r);
-                  calc.reset();
-                }}
-              />
-            </TabsContent>
-          </Tabs>
-          )}
-        </CardContent>
-      </Card>
-
-      {(mode === "manual" || record) && (
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle className="break-words text-base">
-              2. {mode === "manual" ? "Import details" : `${record!.make ?? ""} ${record!.model ?? ""}`}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid gap-4 sm:grid-cols-3">
-              <div>
-                <Label>Import type</Label>
-                <Select value={importType} onValueChange={(v) => setImportType(v as ImportType)}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="direct">Direct import (new / unregistered)</SelectItem>
-                    <SelectItem value="previously_registered">Previously registered</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              {mode === "crsp" && (
-                <div>
-                  <Label htmlFor="yom">Year of manufacture</Label>
-                  <Input id="yom" inputMode="numeric" value={year} onChange={(e) => setYear(e.target.value)} />
-                </div>
-              )}
-              <div>
-                <Label>Category</Label>
-                <Select value={categoryOverride} onValueChange={setCategoryOverride}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="auto">Detect automatically</SelectItem>
-                    {CATEGORIES.map((c) => (
-                      <SelectItem key={c.value} value={c.value}>
-                        {c.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div className="rounded-md border p-3">
-              <div className="grid gap-3 sm:grid-cols-3">
-                <div>
-                  <Label>Purchase currency</Label>
-                  <Select value={currency} onValueChange={setCurrency}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="KES">KES</SelectItem>
-                      <SelectItem value="USD">USD</SelectItem>
-                      <SelectItem value="GBP">GBP</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label htmlFor="pp">Purchase price ({currency})</Label>
-                  <Input id="pp" inputMode="decimal" value={purchasePrice} onChange={(e) => setPurchasePrice(e.target.value)} />
-                </div>
-                {currency !== "KES" && (
-                  <div>
-                    <Label htmlFor="fx">{currency} → KES rate</Label>
-                    <Input
-                      id="fx"
-                      inputMode="decimal"
-                      value={rates[currency] ?? ""}
-                      onChange={(e) => setRates((r) => ({ ...r, [currency]: e.target.value }))}
+      <div className="space-y-6">
+        <Card>
+          <StepHeading step="01" title="Find the unit" icon={<Car className="h-4 w-4 text-primary" />} />
+          <CardContent className="px-3 sm:px-6">
+            <p className="mb-2 text-sm font-medium text-muted-foreground">Vehicle source</p>
+            <div className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-2" role="radiogroup" aria-label="Vehicle source">
+              {[
+                { v: "crsp" as const, t: "CRSP Listed Vehicle", d: "Option 1: use a CRSP record" },
+                { v: "manual" as const, t: "Vehicle Not Listed in CRSP", d: "Option 2: enter vehicle details manually" },
+              ].map((o) => (
+                <button
+                  key={o.v}
+                  type="button"
+                  role="radio"
+                  aria-checked={mode === o.v}
+                  onClick={() => {
+                    setMode(o.v);
+                    calc.reset();
+                    setManualErrors([]);
+                  }}
+                  className={`rounded-xl border p-4 text-left transition-all duration-200 ${
+                    mode === o.v
+                      ? "glow-cobalt border-primary/70 bg-primary/10"
+                      : "glass-chip border-border hover:border-primary/50 hover:bg-white/[0.07]"
+                  }`}
+                >
+                  <span className="flex items-center gap-2 font-semibold">
+                    <span
+                      className={`h-2 w-2 rounded-full ${mode === o.v ? "bg-acid" : "bg-white/20"}`}
                     />
-                  </div>
-                )}
-              </div>
-              {currency !== "KES" && (
-                <p className="mt-2 text-sm">
-                  KES equivalent:{" "}
-                  <span className="font-semibold">
-                    {kesEquivalent != null
-                      ? `KES ${kesEquivalent.toLocaleString("en-KE", { maximumFractionDigits: 0 })}`
-                      : "—"}
+                    {o.t}
                   </span>
-                  {rateValue > 0 && (
-                    <span className="text-muted-foreground"> (rate {rateValue.toFixed(2)})</span>
-                  )}
-                </p>
-              )}
-              {currency !== "KES" && rateValue <= 0 && (
-                <p className="mt-1 text-sm text-destructive">Enter a {currency} → KES rate to convert.</p>
-              )}
+                  <span className="mt-1 block text-sm text-muted-foreground">{o.d}</span>
+                </button>
+              ))}
             </div>
-
-            <div className="grid gap-4 sm:grid-cols-3">
-              <div>
-                <Label htmlFor="fr">Freight</Label>
-                <Input id="fr" inputMode="decimal" value={freight} onChange={(e) => setFreight(e.target.value)} />
-              </div>
-              <div>
-                <Label htmlFor="ins">Insurance</Label>
-                <Input id="ins" inputMode="decimal" value={insurance} onChange={(e) => setInsurance(e.target.value)} />
-              </div>
-              <div>
-                <Label htmlFor="oth">Other costs</Label>
-                <Input id="oth" inputMode="decimal" value={otherCosts} onChange={(e) => setOtherCosts(e.target.value)} />
-              </div>
-            </div>
-
-            <Button
-              className="h-11 w-full sm:w-auto"
-              onClick={() => {
-                if (mode === "manual") {
-                  const errs = validateManual();
-                  setManualErrors(errs);
-                  if (errs.length) return;
-                }
-                calc.mutate();
-              }}
-              disabled={calc.isPending}
-            >
-              {calc.isPending ? "Calculating…" : "Calculate taxes"}
-            </Button>
-            {manualErrors.length > 0 && (
-              <ul className="list-disc space-y-1 pl-5 text-sm text-destructive" role="alert">
-                {manualErrors.map((m) => (
-                  <li key={m}>{m}</li>
-                ))}
-              </ul>
-            )}
-            {calc.isError && (
-              <p className="text-sm text-destructive">{(calc.error as Error).message}</p>
+            {mode === "manual" ? (
+              <ManualVehicleForm values={manual} set={setM} year={year} setYear={setYear} />
+            ) : (
+            <Tabs value={tab} onValueChange={setTab}>
+              <TabsList className="mb-4 h-auto w-full flex-wrap sm:w-auto">
+                <TabsTrigger value="vehicle">Motor vehicles</TabsTrigger>
+                <TabsTrigger value="other">Motorcycles &amp; machinery</TabsTrigger>
+              </TabsList>
+              <TabsContent value="vehicle">
+                <CrspVehicleSearch
+                  onSelect={(r) => {
+                    setRecord(r);
+                    calc.reset();
+                  }}
+                />
+              </TabsContent>
+              <TabsContent value="other">
+                <VehicleSearch
+                  onSelect={(r) => {
+                    setRecord(r);
+                    calc.reset();
+                  }}
+                />
+              </TabsContent>
+            </Tabs>
             )}
           </CardContent>
         </Card>
-      )}
 
-      {calc.data && (
-        <section aria-label="Results">
-          <h2 className="mb-4 text-xl font-semibold">3. Breakdown</h2>
-          <div className="mb-6">
-            <ClearingCosts values={clearing} onChange={setClearing} />
-          </div>
-          <ResultsBreakdown
-            result={calc.data.result as CalculationResult}
-            meta={calc.data.meta}
-            clearingTotal={clearingTotal(clearing)}
-          />
-        </section>
-      )}
+        {(mode === "manual" || record) && (
+          <Card>
+            <StepHeading
+              step="02"
+              title={mode === "manual" ? "Import details" : `${record!.make ?? ""} ${record!.model ?? ""}`.trim()}
+              icon={<Landmark className="h-4 w-4 text-primary" />}
+            />
+            <CardContent className="space-y-5">
+              <div className="grid gap-4 sm:grid-cols-3">
+                <div>
+                  <Label>Import type</Label>
+                  <Select value={importType} onValueChange={(v) => setImportType(v as ImportType)}>
+                    <SelectTrigger className="h-11">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="direct">Direct import (new / unregistered)</SelectItem>
+                      <SelectItem value="previously_registered">Previously registered</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                {mode === "crsp" && (
+                  <div>
+                    <Label htmlFor="yom">Year of manufacture</Label>
+                    <Input id="yom" className="h-11" inputMode="numeric" value={year} onChange={(e) => setYear(e.target.value)} />
+                  </div>
+                )}
+                <div>
+                  <Label>Category</Label>
+                  <Select value={categoryOverride} onValueChange={setCategoryOverride}>
+                    <SelectTrigger className="h-11">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="auto">Detect automatically</SelectItem>
+                      {CATEGORIES.map((c) => (
+                        <SelectItem key={c.value} value={c.value}>
+                          {c.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="glass-chip rounded-xl border border-border p-4">
+                <p className="mb-3 text-sm font-medium text-muted-foreground">Purchase price &amp; currency</p>
+                <div className="grid gap-3 sm:grid-cols-3">
+                  <div>
+                    <Label>Purchase currency</Label>
+                    <Select value={currency} onValueChange={setCurrency}>
+                      <SelectTrigger className="h-11">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="KES">KES</SelectItem>
+                        <SelectItem value="USD">USD</SelectItem>
+                        <SelectItem value="GBP">GBP</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="pp">Purchase price ({currency})</Label>
+                    <Input id="pp" className="h-11" inputMode="decimal" value={purchasePrice} onChange={(e) => setPurchasePrice(e.target.value)} />
+                  </div>
+                  {currency !== "KES" && (
+                    <div>
+                      <Label htmlFor="fx">{currency} → KES rate</Label>
+                      <Input
+                        id="fx"
+                        className="h-11"
+                        inputMode="decimal"
+                        value={rates[currency] ?? ""}
+                        onChange={(e) => setRates((r) => ({ ...r, [currency]: e.target.value }))}
+                      />
+                    </div>
+                  )}
+                </div>
+                {currency !== "KES" && (
+                  <p className="mt-3 flex flex-wrap items-baseline gap-x-2 text-sm">
+                    <span className="text-muted-foreground">KES equivalent:</span>
+                    <span className="font-semibold text-acid tabular-nums">
+                      {kesEquivalent != null
+                        ? `KES ${kesEquivalent.toLocaleString("en-KE", { maximumFractionDigits: 0 })}`
+                        : "—"}
+                    </span>
+                    {rateValue > 0 && (
+                      <span className="text-muted-foreground tabular-nums">(rate {rateValue.toFixed(2)})</span>
+                    )}
+                  </p>
+                )}
+                {currency !== "KES" && rateValue <= 0 && (
+                  <p className="mt-1 text-sm text-destructive">Enter a {currency} → KES rate to convert.</p>
+                )}
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-3">
+                <div>
+                  <Label htmlFor="fr">Freight</Label>
+                  <Input id="fr" className="h-11" inputMode="decimal" value={freight} onChange={(e) => setFreight(e.target.value)} />
+                </div>
+                <div>
+                  <Label htmlFor="ins">Insurance</Label>
+                  <Input id="ins" className="h-11" inputMode="decimal" value={insurance} onChange={(e) => setInsurance(e.target.value)} />
+                </div>
+                <div>
+                  <Label htmlFor="oth">Other costs</Label>
+                  <Input id="oth" className="h-11" inputMode="decimal" value={otherCosts} onChange={(e) => setOtherCosts(e.target.value)} />
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <Button
+                  className="h-12 w-full text-base sm:w-auto sm:px-8"
+                  onClick={() => {
+                    if (mode === "manual") {
+                      const errs = validateManual();
+                      setManualErrors(errs);
+                      if (errs.length) return;
+                    }
+                    calc.mutate();
+                  }}
+                  disabled={calc.isPending}
+                >
+                  {calc.isPending ? "Calculating…" : "Calculate taxes"}
+                </Button>
+                {manualErrors.length > 0 && (
+                  <ul className="list-disc space-y-1 pl-5 text-sm text-destructive" role="alert">
+                    {manualErrors.map((m) => (
+                      <li key={m}>{m}</li>
+                    ))}
+                  </ul>
+                )}
+                {calc.isError && (
+                  <p className="text-sm text-destructive">{(calc.error as Error).message}</p>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {calc.data && (
+          <section aria-label="Results">
+            <Card>
+              <StepHeading step="03" title="Breakdown" icon={<ListChecks className="h-4 w-4 text-primary" />} />
+              <CardContent className="space-y-6">
+                <ClearingCosts values={clearing} onChange={setClearing} />
+                <ResultsBreakdown
+                  result={calc.data.result as CalculationResult}
+                  meta={calc.data.meta}
+                  clearingTotal={clearingTotal(clearing)}
+                />
+              </CardContent>
+            </Card>
+          </section>
+        )}
+      </div>
     </main>
   );
 }

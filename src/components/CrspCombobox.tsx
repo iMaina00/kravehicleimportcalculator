@@ -116,7 +116,7 @@ export function CrspCombobox({
         }}
       />
       {open && !disabled && (
-        <div className="absolute z-50 mt-1 max-h-72 w-full overflow-auto rounded-md border bg-popover p-1 shadow-md">
+        <div className="absolute z-50 mt-1 max-h-72 w-full overflow-auto rounded-xl border border-border bg-popover p-1">
           {load.isPending && options.length === 0 && (
             <p className="px-2 py-1.5 text-sm text-muted-foreground">Loading…</p>
           )}
@@ -131,7 +131,7 @@ export function CrspCombobox({
               onMouseDown={(e) => e.preventDefault()}
               onClick={() => pick(o.value)}
               className={`flex w-full items-center justify-between gap-3 rounded px-2 py-1.5 text-left text-sm ${
-                i === highlight ? "bg-accent text-accent-foreground" : ""
+                i === highlight ? "bg-primary/15 text-accent-foreground" : ""
               }`}
             >
               <span className="min-w-0 break-words">{o.value}</span>

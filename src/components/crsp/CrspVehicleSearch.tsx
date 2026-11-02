@@ -325,7 +325,7 @@ export function CrspVehicleSearch({ onSelect }: { onSelect: (record: SelectedRec
             </div>
           )}
           {!isFetching && !error && rows.length === 0 && (
-            <div className="rounded-lg border border-dashed p-6 text-center">
+            <div className="glass-chip rounded-xl border border-dashed border-border p-6 text-center">
               <p className="font-medium">No vehicles found.</p>
               <p className="mt-1 text-sm text-muted-foreground">Try changing your search or filters.</p>
             </div>
@@ -349,9 +349,9 @@ export function CrspVehicleSearch({ onSelect }: { onSelect: (record: SelectedRec
               ["GVW", r["gvw"]],
             ];
             return (
-              <Card key={String(r["id"])} className="transition-colors hover:border-primary">
+              <Card key={String(r["id"])} className="transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/60 hover:shadow-[0_10px_30px_rgba(36,91,255,0.16)]">
                 <CardContent className="space-y-3 py-4">
-                  <p className="break-words text-base font-semibold leading-snug sm:text-lg">{name}</p>
+                  <p className="break-words font-display text-base font-semibold leading-snug sm:text-lg">{name}</p>
                   <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm sm:grid-cols-4">
                     {details
                       .filter(([, v]) => v != null && String(v).trim() !== "")
@@ -365,7 +365,7 @@ export function CrspVehicleSearch({ onSelect }: { onSelect: (record: SelectedRec
                   <div className="flex flex-col gap-3 border-t pt-3 sm:flex-row sm:items-end sm:justify-between">
                     <div>
                       <p className="text-xs uppercase tracking-wide text-muted-foreground">CRSP</p>
-                      <p className="break-words text-xl font-bold text-primary">
+                      <p className="break-words text-xl font-bold text-acid tabular-nums">
                         {crsp === null ? "Not in source" : `KES ${fmt.format(crsp)}`}
                       </p>
                       <p className="text-xs text-muted-foreground">CRSP row {String(r["source_row"] ?? "")}</p>
