@@ -217,7 +217,7 @@ export function VehicleSearch({ onSelect }: { onSelect: (record: SelectedRecord)
                 <div className="flex items-center gap-4">
                   <div className="text-right">
                     <p className="text-xs text-muted-foreground">CRSP</p>
-                    <p className="font-semibold">{crsp === null ? "Not in source" : `KES ${fmt.format(crsp)}`}</p>
+                    <p className="font-semibold text-acid tabular-nums">{crsp === null ? "Not in source" : `KES ${fmt.format(crsp)}`}</p>
                   </div>
                   <Button
                     size="sm"

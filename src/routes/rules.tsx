@@ -31,7 +31,7 @@ export const Route = createFileRoute("/rules")({
   loader: ({ context }) => context.queryClient.ensureQueryData(rulesQuery),
   errorComponent: ({ error }) => (
     <main className="mx-auto max-w-3xl px-4 py-16">
-      <h1 className="text-xl font-semibold">The rule reference didn't load</h1>
+      <h1 className="font-display text-xl font-semibold">The rule reference didn't load</h1>
       <p className="mt-2 text-sm text-muted-foreground">{(error as Error).message}</p>
     </main>
   ),
@@ -42,11 +42,11 @@ function RulesPage() {
   const { data } = useSuspenseQuery(rulesQuery);
 
   return (
-    <main className="mx-auto max-w-5xl px-4 py-10">
-      <Link to="/" className="text-sm text-primary underline">
-        Back to the calculator
+    <main className="mx-auto max-w-5xl px-4 pb-16">
+      <Link to="/" className="text-sm font-medium text-primary underline-offset-4 hover:underline">
+        ← Back to the calculator
       </Link>
-      <h1 className="mt-3 text-3xl font-bold tracking-tight">Tax rules &amp; depreciation</h1>
+      <h1 className="mt-4 font-display text-3xl font-bold tracking-tight sm:text-4xl">Tax rules &amp; depreciation</h1>
       <p className="mt-2 text-muted-foreground">
         Active CRSP schedule: {data.datasetName ?? "—"} · rule version: {data.taxRuleVersionName ?? "—"}
       </p>
@@ -70,7 +70,9 @@ function RulesPage() {
                 <TableRow key={d.id}>
                   <TableCell>{d.import_type === "direct" ? "Direct import" : "Previously registered"}</TableCell>
                   <TableCell>{d.label}</TableCell>
-                  <TableCell>{(Number(d.rate) * 100).toFixed(0)}%</TableCell>
+                  <TableCell className="font-semibold text-acid tabular-nums">
+                    {(Number(d.rate) * 100).toFixed(0)}%
+                  </TableCell>
                   <TableCell className="text-xs text-muted-foreground">{d.source ?? "—"}</TableCell>
                 </TableRow>
               ))}
@@ -101,7 +103,7 @@ function RulesPage() {
                   <TableCell className="text-xs">{r.category_code}</TableCell>
                   <TableCell className="text-xs">{r.import_type}</TableCell>
                   <TableCell>{r.name}</TableCell>
-                  <TableCell>
+                  <TableCell className="font-semibold tabular-nums">
                     {r.rate === null
                       ? r.fixed_amount === null
                         ? "—"
@@ -129,7 +131,7 @@ function RulesPage() {
           <CardContent>
             <ul className="text-sm">
               {data.exchangeRates.map((x) => (
-                <li key={x.currency}>
+                <li key={x.currency} className="tabular-nums">
                   1 {x.currency} = {Number(x.rate_to_kes).toLocaleString()} KES
                 </li>
               ))}
