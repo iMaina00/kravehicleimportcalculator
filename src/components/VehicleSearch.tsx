@@ -183,7 +183,7 @@ export function VehicleSearch({ onSelect }: { onSelect: (record: SelectedRecord)
           const flags = (r["flags"] as string[] | null) ?? [];
           const mn = (r["model_number"] as string | null) ?? "";
           return (
-            <Card key={String(r["id"])} className="transition-colors hover:border-primary">
+            <Card key={String(r["id"])} className="transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/60 hover:shadow-[0_10px_30px_rgba(36,91,255,0.16)]">
               <CardContent className="flex flex-wrap items-center justify-between gap-3 py-4">
                 <div className="min-w-0">
                   <p className="break-words font-medium">
