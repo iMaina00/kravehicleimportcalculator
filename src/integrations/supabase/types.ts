@@ -14,6 +14,72 @@ export type Database = {
   }
   public: {
     Tables: {
+      calculation_audit_logs: {
+        Row: {
+          action: string
+          actor: string | null
+          after: Json | null
+          before: Json | null
+          created_at: string
+          entity: string
+          entity_id: string | null
+          id: string
+          notes: string | null
+        }
+        Insert: {
+          action: string
+          actor?: string | null
+          after?: Json | null
+          before?: Json | null
+          created_at?: string
+          entity: string
+          entity_id?: string | null
+          id?: string
+          notes?: string | null
+        }
+        Update: {
+          action?: string
+          actor?: string | null
+          after?: Json | null
+          before?: Json | null
+          created_at?: string
+          entity?: string
+          entity_id?: string | null
+          id?: string
+          notes?: string | null
+        }
+        Relationships: []
+      }
+      calculation_rule_versions: {
+        Row: {
+          created_at: string
+          effective_date: string | null
+          id: string
+          name: string
+          notes: string | null
+          settings: Json
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          effective_date?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          settings?: Json
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          effective_date?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          settings?: Json
+          status?: string
+        }
+        Relationships: []
+      }
       calculations: {
         Row: {
           created_at: string
@@ -75,6 +141,110 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      calibrated_crsp_values: {
+        Row: {
+          approved_at: string | null
+          confidence: string
+          created_at: string
+          created_by: string | null
+          group_id: string
+          id: string
+          includes_reference_ids: string[]
+          method: string
+          notes: string | null
+          value: number
+        }
+        Insert: {
+          approved_at?: string | null
+          confidence?: string
+          created_at?: string
+          created_by?: string | null
+          group_id: string
+          id?: string
+          includes_reference_ids?: string[]
+          method: string
+          notes?: string | null
+          value: number
+        }
+        Update: {
+          approved_at?: string | null
+          confidence?: string
+          created_at?: string
+          created_by?: string | null
+          group_id?: string
+          id?: string
+          includes_reference_ids?: string[]
+          method?: string
+          notes?: string | null
+          value?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "calibrated_crsp_values_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "crsp_calibration_groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crsp_calibration_groups: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          approved_crsp_kes: number | null
+          approved_method: string | null
+          created_at: string
+          drivetrain: string | null
+          engine_cc: number | null
+          fuel: string | null
+          id: string
+          make: string
+          model: string
+          notes: string | null
+          status: string
+          tolerance_pct: number
+          transmission: string | null
+          variant: string | null
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          approved_crsp_kes?: number | null
+          approved_method?: string | null
+          created_at?: string
+          drivetrain?: string | null
+          engine_cc?: number | null
+          fuel?: string | null
+          id?: string
+          make: string
+          model: string
+          notes?: string | null
+          status?: string
+          tolerance_pct?: number
+          transmission?: string | null
+          variant?: string | null
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          approved_crsp_kes?: number | null
+          approved_method?: string | null
+          created_at?: string
+          drivetrain?: string | null
+          engine_cc?: number | null
+          fuel?: string | null
+          id?: string
+          make?: string
+          model?: string
+          notes?: string | null
+          status?: string
+          tolerance_pct?: number
+          transmission?: string | null
+          variant?: string | null
+        }
+        Relationships: []
       }
       data_validation_issues: {
         Row: {
@@ -338,6 +508,102 @@ export type Database = {
           },
         ]
       }
+      insider_tax_references: {
+        Row: {
+          assessment_year: number
+          created_at: string
+          created_by: string | null
+          customs_value_kes: number | null
+          date_received: string | null
+          drivetrain: string | null
+          engine_cc: number | null
+          excise_duty_kes: number | null
+          extra_depreciation_pct: number
+          final_taxes_kes: number
+          fuel: string | null
+          id: string
+          idf_kes: number | null
+          import_category: string
+          import_duty_kes: number | null
+          is_rounded: boolean
+          make: string
+          manufacturing_year: number
+          model: string
+          notes: string | null
+          rdl_kes: number | null
+          rounding_precision: number | null
+          source_reference: string | null
+          standard_depreciation_pct: number | null
+          status: string
+          tax_category_code: string | null
+          transmission: string | null
+          variant: string | null
+          vat_kes: number | null
+        }
+        Insert: {
+          assessment_year?: number
+          created_at?: string
+          created_by?: string | null
+          customs_value_kes?: number | null
+          date_received?: string | null
+          drivetrain?: string | null
+          engine_cc?: number | null
+          excise_duty_kes?: number | null
+          extra_depreciation_pct?: number
+          final_taxes_kes: number
+          fuel?: string | null
+          id?: string
+          idf_kes?: number | null
+          import_category?: string
+          import_duty_kes?: number | null
+          is_rounded?: boolean
+          make: string
+          manufacturing_year: number
+          model: string
+          notes?: string | null
+          rdl_kes?: number | null
+          rounding_precision?: number | null
+          source_reference?: string | null
+          standard_depreciation_pct?: number | null
+          status?: string
+          tax_category_code?: string | null
+          transmission?: string | null
+          variant?: string | null
+          vat_kes?: number | null
+        }
+        Update: {
+          assessment_year?: number
+          created_at?: string
+          created_by?: string | null
+          customs_value_kes?: number | null
+          date_received?: string | null
+          drivetrain?: string | null
+          engine_cc?: number | null
+          excise_duty_kes?: number | null
+          extra_depreciation_pct?: number
+          final_taxes_kes?: number
+          fuel?: string | null
+          id?: string
+          idf_kes?: number | null
+          import_category?: string
+          import_duty_kes?: number | null
+          is_rounded?: boolean
+          make?: string
+          manufacturing_year?: number
+          model?: string
+          notes?: string | null
+          rdl_kes?: number | null
+          rounding_precision?: number | null
+          source_reference?: string | null
+          standard_depreciation_pct?: number | null
+          status?: string
+          tax_category_code?: string | null
+          transmission?: string | null
+          variant?: string | null
+          vat_kes?: number | null
+        }
+        Relationships: []
+      }
       machinery: {
         Row: {
           crsp_kes: number | null
@@ -384,6 +650,59 @@ export type Database = {
             columns: ["dataset_id"]
             isOneToOne: false
             referencedRelation: "vehicle_datasets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      missing_year_estimates: {
+        Row: {
+          age_years: number
+          created_at: string
+          crsp_kes: number
+          crsp_source: string
+          estimated_taxes_kes: number
+          extra_depreciation_pct: number
+          group_id: string
+          id: string
+          manufacturing_year: number
+          notes: string | null
+          standard_depreciation_pct: number | null
+          status: string
+        }
+        Insert: {
+          age_years: number
+          created_at?: string
+          crsp_kes: number
+          crsp_source: string
+          estimated_taxes_kes: number
+          extra_depreciation_pct?: number
+          group_id: string
+          id?: string
+          manufacturing_year: number
+          notes?: string | null
+          standard_depreciation_pct?: number | null
+          status?: string
+        }
+        Update: {
+          age_years?: number
+          created_at?: string
+          crsp_kes?: number
+          crsp_source?: string
+          estimated_taxes_kes?: number
+          extra_depreciation_pct?: number
+          group_id?: string
+          id?: string
+          manufacturing_year?: number
+          notes?: string | null
+          standard_depreciation_pct?: number | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "missing_year_estimates_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "crsp_calibration_groups"
             referencedColumns: ["id"]
           },
         ]
@@ -452,6 +771,59 @@ export type Database = {
             columns: ["dataset_id"]
             isOneToOne: false
             referencedRelation: "vehicle_datasets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reverse_engineering_results: {
+        Row: {
+          confidence: string
+          created_at: string
+          created_by: string | null
+          difference_kes: number | null
+          forward: Json
+          forward_calculated_kes: number | null
+          id: string
+          inferred_crsp_kes: number | null
+          input: Json
+          notes: string | null
+          reference_id: string | null
+          result: Json
+        }
+        Insert: {
+          confidence: string
+          created_at?: string
+          created_by?: string | null
+          difference_kes?: number | null
+          forward: Json
+          forward_calculated_kes?: number | null
+          id?: string
+          inferred_crsp_kes?: number | null
+          input: Json
+          notes?: string | null
+          reference_id?: string | null
+          result: Json
+        }
+        Update: {
+          confidence?: string
+          created_at?: string
+          created_by?: string | null
+          difference_kes?: number | null
+          forward?: Json
+          forward_calculated_kes?: number | null
+          id?: string
+          inferred_crsp_kes?: number | null
+          input?: Json
+          notes?: string | null
+          reference_id?: string | null
+          result?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reverse_engineering_results_reference_id_fkey"
+            columns: ["reference_id"]
+            isOneToOne: false
+            referencedRelation: "insider_tax_references"
             referencedColumns: ["id"]
           },
         ]
@@ -575,6 +947,27 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       vehicle_categories: {
         Row: {
@@ -847,6 +1240,7 @@ export type Database = {
       }
       crsp_seat_count: { Args: { t: string }; Returns: number }
       crsp_transmission_label: { Args: { t: string }; Returns: string }
+      has_role: { Args: { _role: string; _user_id: string }; Returns: boolean }
       search_machinery: {
         Args: {
           p_dataset: string

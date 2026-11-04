@@ -22,6 +22,13 @@
       "when": 1793798577181,
       "tag": "0002_probe_has_role_fn",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1793798601109,
+      "tag": "0003_crsp_intelligence_tables",
+      "breakpoints": true
     }
   ]
 }
