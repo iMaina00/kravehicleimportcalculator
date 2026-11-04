@@ -751,6 +751,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      __probe_has: {
+        Args: { _role: string; _user_id: string }
+        Returns: boolean
+      }
       crsp_body_label: { Args: { t: string }; Returns: string }
       crsp_drive_label: { Args: { t: string }; Returns: string }
       crsp_engine_cc: { Args: { t: string }; Returns: number }
