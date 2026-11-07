@@ -1,7 +1,7 @@
 import type { ImportType, TaxRule, TaxType } from "@/lib/calculator/types";
 import type { TaxChain, TotalComponents } from "./types";
 
-const TAX_TYPES: TaxType[] = ["import_duty", "excise", "vat", "rdl", "idf"];
+const TAX_TYPES: TaxType[] = ["customs_value", "import_duty", "excise", "vat", "rdl", "idf"];
 
 /**
  * Extracts the workbook tax chain (rates + divisor chain) for one category and
