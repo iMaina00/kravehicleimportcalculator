@@ -17,3 +17,10 @@
 - [ ] Stage 4 — UI: "CRSP Intelligence" nav → Dashboard, Reverse Engineer, CRSP Calibration, Insider References, Missing-Year Estimator, Calculation History
 - [ ] Stage 5 — Seed G63 reference data (2021/2024/2025), rule-versioning + audit trail
 - [ ] Stage 6 — Tests A–D (G63), CSV/Excel export
+
+## CRSP Intelligence progress
+- [x] Database tables, admin role checks, audit log
+- [x] Engine: reverse calculation, calibration, missing-year estimates (G63 tests pass)
+- [ ] Server functions + sign-in
+- [ ] CRSP Intelligence screens (dashboard, reverse, calibration, references, estimator, history)
+- [ ] G63 seed references, CSV/Excel exports
