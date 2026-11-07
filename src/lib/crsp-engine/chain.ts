@@ -67,15 +67,15 @@ export function chainTotals(chain: TaxChain, components: TotalComponents): Chain
   const vatRate = chain.vatRate;
   const includeLevies = components === "all";
 
-  let factor = id + (1 + id) * vatRate;
+  const exciseFactor = chain.exciseFixedKes === null && chain.exciseRate !== null ? (1 + id) * chain.exciseRate : 0;
+  // VAT base = CV + ID + ED
+  let factor = id + exciseFactor + (1 + id + exciseFactor) * vatRate;
   if (includeLevies) factor += chain.rdlRate + chain.idfRate;
 
   let fixed = 0;
   if (chain.exciseFixedKes !== null) {
     // ED = fixed; VAT applies on (CV + ID + fixed).
     fixed = chain.exciseFixedKes * (1 + vatRate);
-  } else if (chain.exciseRate !== null) {
-    factor += (1 + id) * chain.exciseRate;
   }
 
   return { variableFactor: factor, fixedKes: fixed };

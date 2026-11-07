@@ -8,8 +8,7 @@ import {
   impliedCrspFromCustomsValue,
   reverseCustomsValue,
 } from "./chain";
-import type { ReverseInput, ReverseResult, ReverseStep, TaxRule as _TaxRule } from "./types";
-import type { ConfidenceLevel } from "./types";
+import type { ConfidenceLevel, ReverseInput, ReverseResult, ReverseStep } from "./types";
 
 const FORWARD_TOLERANCE_KES = 1;
 
