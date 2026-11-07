@@ -1,5 +1,5 @@
 import { resolveDepreciation } from "@/lib/calculator/depreciation";
-import { buildTaxChain, chainTotals, customsValueFromCrsp, forwardTaxes } from "./chain";
+import { buildTaxChain, customsValueFromCrsp, forwardTaxes } from "./chain";
 import type { EstimateInput, EstimateYearResult } from "./types";
 
 /**
@@ -52,8 +52,6 @@ export function estimateMissingYears(input: EstimateInput): EstimateYearResult[]
 
       const customsValue = customsValueFromCrsp(chain, input.approvedCrspKes, depRate, input.extraDepreciationPct);
       const estimatedTaxes = forwardTaxes(chain, customsValue, "all");
-      const { variableFactor } = chainTotals(chain, "all");
-
       return {
         manufacturingYear: year,
         ageYears,
@@ -64,8 +62,6 @@ export function estimateMissingYears(input: EstimateInput): EstimateYearResult[]
         crspKes: input.approvedCrspKes,
         estimatedTaxesKes: estimatedTaxes,
         warnings,
-        // Expose the factor so the UI can show the arithmetic behind the estimate.
-        ...({} as Record<string, never>),
-      } satisfies EstimateYearResult & { taxesFactor: number };
+      } satisfies EstimateYearResult;
     });
 }
