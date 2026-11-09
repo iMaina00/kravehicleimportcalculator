@@ -29,6 +29,13 @@
       "when": 1793798601109,
       "tag": "0003_crsp_intelligence_tables",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1794195252916,
+      "tag": "0004_secure_intelligence_history",
+      "breakpoints": true
     }
   ]
 }
