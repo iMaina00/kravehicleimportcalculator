@@ -151,6 +151,7 @@ export type Database = {
           group_id: string
           id: string
           includes_reference_ids: string[]
+          manufacturing_year: number | null
           method: string
           notes: string | null
           value: number
@@ -163,6 +164,7 @@ export type Database = {
           group_id: string
           id?: string
           includes_reference_ids?: string[]
+          manufacturing_year?: number | null
           method: string
           notes?: string | null
           value: number
@@ -175,6 +177,7 @@ export type Database = {
           group_id?: string
           id?: string
           includes_reference_ids?: string[]
+          manufacturing_year?: number | null
           method?: string
           notes?: string | null
           value?: number
@@ -536,6 +539,7 @@ export type Database = {
           standard_depreciation_pct: number | null
           status: string
           tax_category_code: string | null
+          total_components: string
           transmission: string | null
           variant: string | null
           vat_kes: number | null
@@ -567,6 +571,7 @@ export type Database = {
           standard_depreciation_pct?: number | null
           status?: string
           tax_category_code?: string | null
+          total_components?: string
           transmission?: string | null
           variant?: string | null
           vat_kes?: number | null
@@ -598,6 +603,7 @@ export type Database = {
           standard_depreciation_pct?: number | null
           status?: string
           tax_category_code?: string | null
+          total_components?: string
           transmission?: string | null
           variant?: string | null
           vat_kes?: number | null
@@ -657,6 +663,8 @@ export type Database = {
       missing_year_estimates: {
         Row: {
           age_years: number
+          assessment_year: number
+          calculation_input: Json
           created_at: string
           crsp_kes: number
           crsp_source: string
@@ -671,6 +679,8 @@ export type Database = {
         }
         Insert: {
           age_years: number
+          assessment_year?: number
+          calculation_input?: Json
           created_at?: string
           crsp_kes: number
           crsp_source: string
@@ -685,6 +695,8 @@ export type Database = {
         }
         Update: {
           age_years?: number
+          assessment_year?: number
+          calculation_input?: Json
           created_at?: string
           crsp_kes?: number
           crsp_source?: string
